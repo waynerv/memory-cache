@@ -1,0 +1,2 @@
+FLASK_APP=memory_cache
+FLASK_ENV=development
