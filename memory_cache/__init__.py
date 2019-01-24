@@ -4,6 +4,7 @@ from flask import Flask
 from memory_cache.settings import config
 
 from memory_cache.extensions import db
+from memory_cache.commands import register_command
 
 
 def create_app(config_name=None):
@@ -18,6 +19,8 @@ def create_app(config_name=None):
         return 'Hello, World!'
 
     register_extensions(app)
+    register_shell_context(app)
+    register_command(app)
 
     return app
 
@@ -36,3 +39,9 @@ def register_error_handler(app):
 
 def register_template_context(app):
     pass
+
+
+def register_shell_context(app):
+    @app.shell_context_processor
+    def make_shell_context():
+        return dict(db=db)
