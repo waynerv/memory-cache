@@ -1,9 +1,9 @@
 import os
-from flask import Flask
+from flask import Flask, render_template
 
 from memory_cache.settings import config
 
-from memory_cache.extensions import db
+from memory_cache.extensions import db, bootstrap, moment
 from memory_cache.commands import register_command
 
 
@@ -16,7 +16,7 @@ def create_app(config_name=None):
 
     @app.route('/')
     def hello():
-        return 'Hello, World!'
+        return render_template('base.html')
 
     register_extensions(app)
     register_shell_context(app)
@@ -31,6 +31,8 @@ def register_blueprints(app):
 
 def register_extensions(app):
     db.init_app(app)
+    bootstrap.init_app(app)
+    moment.init_app(app)
 
 
 def register_error_handler(app):

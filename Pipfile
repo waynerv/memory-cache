@@ -14,6 +14,8 @@ pymysql = "*"
 flask-sqlalchemy = "*"
 flask-wtf = "*"
 pillow = "*"
+bootstrap-flask = "*"
+flask-moment = "*"
 
 [requires]
 python_version = "3.6"
