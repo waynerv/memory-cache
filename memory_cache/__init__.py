@@ -40,7 +40,9 @@ def register_error_handler(app):
 
 
 def register_template_context(app):
-    pass
+    @app.context_processor
+    def make_template_context():
+        pass
 
 
 def register_shell_context(app):
