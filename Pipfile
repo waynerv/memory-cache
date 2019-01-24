@@ -13,6 +13,7 @@ python-dotenv = "*"
 pymysql = "*"
 flask-sqlalchemy = "*"
 flask-wtf = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.6"

@@ -5,8 +5,8 @@ basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 class BaseConfig(object):
     SECRET_KEY = os.getenv('SECRET_KEY', 'dfjeoiuoesxzmmcz')
-
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    APP_UPLOAD_PATH = os.path.join(basedir, 'uploads')
 
 
 class DevelopmentConfig(BaseConfig):

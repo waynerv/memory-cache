@@ -271,3 +271,11 @@ fabric.properties
 .venv/
 
 # End of https://www.gitignore.io/api/linux,flask,python,pycharm
+
+# Development
+*.db
+uploads/*
+!uploads/.gitkeep
+!uploads/avatars
+uploads/avatars/*
+!uploads/avatars/.gitkeep

@@ -9,6 +9,11 @@ tagging = db.Table('tagging',
                    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'))
                    )
 
+roles_permissions = db.Table('roles_permissions',
+                             db.Column('role.id', db.Integer, db.ForeignKey('role.id')),
+                             db.Column('permission.id', db.Integer, db.ForeignKey('permission.id'))
+                             )
+
 
 class Collect(db.Model):
     collector_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
@@ -31,7 +36,7 @@ class User(db.Model):
     name = db.Column(db.String(30))
     username = db.Column(db.String(20), unique=True)
     password_hash = db.Column(db.String(128))
-    email = db.Column(db.String(254))
+    email = db.Column(db.String(254), unique=True)
     website = db.Column(db.String(255))
     bio = db.Column(db.Text)
     location = db.Column(db.String(30))
@@ -44,6 +49,9 @@ class User(db.Model):
                                 cascade='all')
     followers = db.relationship('Follow', foreign_keys=[Follow.followed_id], back_populates='followed', lazy='dynamic',
                                 cascade='all')
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+    role = db.relationship('Role', back_populates='users')
+    comments = db.relationship('Comment', back_populates='author')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -60,7 +68,7 @@ class Photo(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     author = db.relationship('User', back_populates='photos')
     comments = db.relationship('Comment', back_populates='photo', cascade='all, delete')
-    tags = db.relationship('Tag', secondary='tag_table', back_populates='photos')
+    tags = db.relationship('Tag', secondary=tagging, back_populates='photos')
     collectors = db.relationship('Collect', back_populates='collected', cascade='all')
 
 
@@ -68,14 +76,16 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow())
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    author = db.relationship('User', back_populates='comments')
     photo_id = db.Column(db.Integer, db.ForeignKey('photo.id'))
     photo = db.relationship('Photo', back_populates='comments')
 
 
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
-    photos = db.relationship('Photo', secondary='tag_table', back_populates='tags')
+    name = db.Column(db.String(64), unique=True)
+    photos = db.relationship('Photo', secondary=tagging, back_populates='tags')
 
 
 class Notification(db.Model):
@@ -90,8 +100,11 @@ class Notification(db.Model):
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
+    permissions = db.relationship('Permission', secondary=roles_permissions, back_populates='roles')
+    users = db.relationship('User', back_populates='role')
 
 
 class Permission(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
+    roles = db.relationship('Role', secondary=roles_permissions, back_populates='permissions')
