@@ -43,10 +43,20 @@ def fake_user(count=10):
         )
         user.set_password('123456')
         db.session.add(user)
-    try:
-        db.session.commit()
-    except IntegrityError:
-        db.session.rollback()
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+
+
+def fake_tag(count=20):
+    for i in range(count):
+        tag = Tag(name=fake.word())
+        db.session.add(tag)
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
 
 
 def fake_photo(count=50):
@@ -66,23 +76,13 @@ def fake_photo(count=50):
         )
 
         # tag
-        for j in range(random.randint(2, 5)):
+        for j in range(random.randint(1, 5)):
             tag = Tag.query.get(random.randint(1, Tag.query.count()))
             if tag not in photo.tags:
                 photo.tags.append(tag)
 
         db.session.add(photo)
     db.session.commit()
-
-
-def fake_tag(count=20):
-    for i in range(count):
-        tag = Tag(name=fake.word())
-        db.session.add(tag)
-    try:
-        db.session.commit()
-    except IntegrityError:
-        db.session.rollback()
 
 
 def fake_comment(count=100):

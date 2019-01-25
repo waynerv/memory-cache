@@ -81,6 +81,9 @@ class Comment(db.Model):
     author = db.relationship('User', back_populates='comments')
     photo_id = db.Column(db.Integer, db.ForeignKey('photo.id'))
     photo = db.relationship('Photo', back_populates='comments')
+    replied_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
+    replied = db.relationship('Comment', remote_side=[id], back_populates='replies')
+    replies = db.relationship('Comment', back_populates='replied', cascade='all, delete-orphan')
 
 
 class Tag(db.Model):
