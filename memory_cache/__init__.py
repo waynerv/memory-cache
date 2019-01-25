@@ -1,10 +1,15 @@
 import os
+
 from flask import Flask, render_template
 
-from memory_cache.settings import config
-
-from memory_cache.extensions import db, bootstrap, moment, login_manager
 from memory_cache.commands import register_command
+from memory_cache.extensions import db, bootstrap, moment, login_manager
+from memory_cache.settings import config
+from memory_cache.blueprints.admin import admin_bp
+from memory_cache.blueprints.ajax import ajax_bp
+from memory_cache.blueprints.auth import auth_bp
+from memory_cache.blueprints.main import main_bp
+from memory_cache.blueprints.user import user_bp
 
 
 def create_app(config_name=None):
@@ -14,19 +19,19 @@ def create_app(config_name=None):
     app = Flask('memory_cache')
     app.config.from_object(config[config_name])
 
-    @app.route('/')
-    def hello():
-        return render_template('base.html')
-
     register_extensions(app)
     register_shell_context(app)
     register_command(app)
+    register_blueprints(app)
 
     return app
 
 
 def register_blueprints(app):
-    app.register_blueprint()
+    app.register_blueprint(main_bp)
+    app.register_blueprint(ajax_bp, url_prefix='/ajax')
+    app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(user_bp, url_prefix='/user')
 
 
 def register_extensions(app):
