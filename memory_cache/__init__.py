@@ -3,7 +3,7 @@ from flask import Flask, render_template
 
 from memory_cache.settings import config
 
-from memory_cache.extensions import db, bootstrap, moment
+from memory_cache.extensions import db, bootstrap, moment, login_manager
 from memory_cache.commands import register_command
 
 
@@ -33,6 +33,7 @@ def register_extensions(app):
     db.init_app(app)
     bootstrap.init_app(app)
     moment.init_app(app)
+    login_manager.init_app(app)
 
 
 def register_error_handler(app):

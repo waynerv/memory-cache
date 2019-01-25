@@ -16,6 +16,7 @@ flask-wtf = "*"
 pillow = "*"
 bootstrap-flask = "*"
 flask-moment = "*"
+flask-login = "*"
 
 [requires]
 python_version = "3.6"

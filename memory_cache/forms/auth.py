@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Length, Regexp, Email, EqualTo, ValidationError
+
 from memory_cache.models import User
 
 
@@ -22,14 +23,21 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Register')
 
     def validate_email(self, field):
-        if User.query.filter(User.email==field.data).first():
+        if User.query.filter(User.email == field.data).first():
             raise ValidationError('The email is already in use.')
 
     def validate_username(self, field):
-        if User.query.filter(User.username==field.data).first():
+        if User.query.filter(User.username == field.data).first():
             raise ValidationError('The username is already in use.')
 
 
-class ForgetPasswordForm()
+class ForgetPasswordForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Length(1, 254), Email()])
+    submit = SubmitField()
+
+
+class ResetPasswordForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Length(1, 254), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(6, 128), EqualTo('password2')])
+    password2 = PasswordField('Confirm Password', validators=[DataRequired()])
     submit = SubmitField()

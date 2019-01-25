@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 from memory_cache.extensions import db
 
@@ -31,7 +32,7 @@ class Follow(db.Model):
     followed = db.relationship('User', foreign_keys=[followed_id], back_populates='followers', lazy='joined')
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
     username = db.Column(db.String(20), unique=True)
