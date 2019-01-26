@@ -11,9 +11,12 @@ class BaseConfig(object):
     APP_UPLOAD_PATH = os.path.join(basedir, 'uploads')
     APP_MAIL_SUBJECT_PREFIX = '[MemoryCache]'
 
+    MAIL_SERVER = os.getenv('MAIL_SERVER')
+    MAIL_USERNAME = os.getenv('MAIL_USERNAME')
+    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
     MAIL_PORT = 465
     MAIL_USE_SSL = True
-    DEFAULT_MAIL_SENDER = 'MemoryCache admin'
+    MAIL_DEFAULT_SENDER = ('MemoryCache Admin', 'noreply@shallwecode.top')
 
 
 class DevelopmentConfig(BaseConfig):

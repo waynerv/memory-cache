@@ -19,7 +19,7 @@ def redirect_back(default='main.index', **kwargs):
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
     test_url = urlparse(urljoin(request.host_url, target))
-    return test_url.schema in ('http', 'https') and ref_url.netloc == test_url.netloc
+    return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
 
 
 def generate_token(user, operation, expire_in=None, **kwargs):
@@ -29,7 +29,7 @@ def generate_token(user, operation, expire_in=None, **kwargs):
     return s.dumps(data)
 
 
-def validate_token(user, token, operation):
+def validate_token(user, token, operation, password=None):
     s = Serializer(current_app.config['SECRET_KEY'])
 
     try:
@@ -42,6 +42,8 @@ def validate_token(user, token, operation):
 
     if operation == Operations.CONFIRM:
         user.confirmed = True
+    elif operation == Operations.RESET_PASSWORD:
+        user.set_password(password)
     else:
         return False
 
