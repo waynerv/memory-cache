@@ -16,3 +16,7 @@ def load_user(user_id):
     from memory_cache.models import User
     user = User.query.get(int(user_id))
     return user
+
+login_manager.login_view = 'auth.login'
+login_manager.login_message = 'Please log in to continue.'
+login_manager.login_message_category = 'warning'

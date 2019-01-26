@@ -1,6 +1,7 @@
 import click
 
 from memory_cache.extensions import db
+from memory_cache.models import Role
 
 
 def register_command(app):
@@ -10,6 +11,7 @@ def register_command(app):
     @click.option('--tag', default=20, help='Quantity of tags, default is 20')
     @click.option('--comment', default=100, help='Quantity of comments, default is 100')
     def forge(user, photo, tag, comment):
+        '''Forge data'''
         from memory_cache.fakes import fake_admin, fake_comment, fake_photo, fake_user, fake_tag
 
         db.drop_all()
@@ -35,9 +37,18 @@ def register_command(app):
     @app.cli.command()
     @click.option('--drop', is_flag=True, help='Create after drop.')
     def initdb(drop):
+        '''Initialized database.'''
         if drop:
             click.confirm('Are you sure to drop the database?', abort=True)
             db.drop_all()
             click.echo('Database droped.')
         db.create_all()
         click.echo('Database initialized.')
+
+    @app.cli.command()
+    def init():
+        '''Initialized MemoryCache'''
+        click.echo('Initializing the roles and permissions...')
+        Role.init_role()
+        click.echo('Done')
+

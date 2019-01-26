@@ -10,6 +10,7 @@ class BaseConfig(object):
 
     APP_UPLOAD_PATH = os.path.join(basedir, 'uploads')
     APP_MAIL_SUBJECT_PREFIX = '[MemoryCache]'
+    APP_ADMIN_EMAIL = 'ampedee@163.com'
 
     MAIL_SERVER = os.getenv('MAIL_SERVER')
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')
