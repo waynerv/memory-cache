@@ -6,7 +6,14 @@ basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 class BaseConfig(object):
     SECRET_KEY = os.getenv('SECRET_KEY', 'dfjeoiuoesxzmmcz')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    MAX_CONTENT_LENGTH = 3 * 1024 * 1024
+
     APP_UPLOAD_PATH = os.path.join(basedir, 'uploads')
+    APP_MAIL_SUBJECT_PREFIX = '[MemoryCache]'
+
+    MAIL_PORT = 465
+    MAIL_USE_SSL = True
+    DEFAULT_MAIL_SENDER = 'MemoryCache admin'
 
 
 class DevelopmentConfig(BaseConfig):
@@ -26,3 +33,9 @@ config = {
     'test': TestingConfig,
     'production': ProductionConfig
 }
+
+
+class Operations:
+    CONFIRM = 'confirm'
+    RESET_PASSWORD = 'reset-password'
+    CHANGE_EMAIL = 'change-email'

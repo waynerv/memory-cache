@@ -35,9 +35,9 @@ class Follow(db.Model):
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
-    username = db.Column(db.String(20), unique=True)
+    username = db.Column(db.String(20), unique=True, index=True)
     password_hash = db.Column(db.String(128))
-    email = db.Column(db.String(254), unique=True)
+    email = db.Column(db.String(254), unique=True, index=True)
     website = db.Column(db.String(255))
     bio = db.Column(db.Text)
     location = db.Column(db.String(30))

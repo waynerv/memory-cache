@@ -17,6 +17,7 @@ pillow = "*"
 bootstrap-flask = "*"
 flask-moment = "*"
 flask-login = "*"
+flask-mail = "*"
 
 [requires]
 python_version = "3.6"

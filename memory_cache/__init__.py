@@ -1,15 +1,15 @@
 import os
 
-from flask import Flask, render_template
+from flask import Flask
 
-from memory_cache.commands import register_command
-from memory_cache.extensions import db, bootstrap, moment, login_manager
-from memory_cache.settings import config
 from memory_cache.blueprints.admin import admin_bp
 from memory_cache.blueprints.ajax import ajax_bp
 from memory_cache.blueprints.auth import auth_bp
 from memory_cache.blueprints.main import main_bp
 from memory_cache.blueprints.user import user_bp
+from memory_cache.commands import register_command
+from memory_cache.extensions import db, bootstrap, moment, login_manager, mail
+from memory_cache.settings import config
 
 
 def create_app(config_name=None):
@@ -39,6 +39,7 @@ def register_extensions(app):
     bootstrap.init_app(app)
     moment.init_app(app)
     login_manager.init_app(app)
+    mail.init_app(app)
 
 
 def register_error_handler(app):
