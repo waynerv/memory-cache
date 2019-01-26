@@ -31,7 +31,7 @@
               <ul class="navbar-nav ml-auto">
                   {% if not current_user.is_authenticated %}
                       {{ render_nav_item('auth.register', 'Register', use_li=True) }}
-                      {{ render_nav_item('auth.register', 'Log in', use_li=True) }}
+                      {{ render_nav_item('auth.login', 'Log in', use_li=True) }}
                   {% else %}
                       {{ render_nav_item('auth.register', 'Log out', use_li=True) }}
                   {% endif %}

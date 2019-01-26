@@ -1,11 +1,12 @@
 from flask import Blueprint, redirect, url_for, render_template, flash
-from flask_login import current_user, login_required
-from memory_cache.forms.auth import RegisterForm
-from memory_cache.models import User
+from flask_login import current_user, login_required, login_user
+
+from memory_cache.emails import send_confirm_email, send_reset_password_email
 from memory_cache.extensions import db
+from memory_cache.forms.auth import RegisterForm, LoginForm, ForgetPasswordForm
+from memory_cache.models import User
 from memory_cache.settings import Operations
-from memory_cache.utils import generate_token, validate_token
-from memory_cache.emails import send_confirm_email
+from memory_cache.utils import generate_token, validate_token, redirect_back
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -57,8 +58,38 @@ def resend_confirm_email():
     return redirect(url_for('main.index'))
 
 
+@auth_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+
+    form = LoginForm()
+    if form.validate_on_submit():
+        email = form.email.data.lower()
+        password = form.password.data
+        remember_me = form.remember_me.data
+        user = User.query.filter(User.email == email).first()
+        if user is not None and user.validate_password(password):
+            login_user(user, remember=remember_me)
+            return redirect_back()
+        flash('Invalid email or password', 'warning')
+    return render_template('auth/login.html', form=form)
 
 
+@auth_bp.route('/forget-password', methods=['GET', 'POST'])
+def forget_password():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
 
-
-
+    form = ForgetPasswordForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        user = User.query.filter(User.email == email).first()
+        if user:
+            token = generate_token(user=user, operation=Operations.RESET_PASSWORD)
+            send_reset_password_email(user=user, token=token)
+            flash('Password reset email sent, check your inbox.', 'info')
+            return redirect(url_for('auth.login'))
+        flash('Invalid email.', 'warning')
+        return redirect(url_for('auth.forget_password'))
+    return render_template('auth/reset_password.html', form=form)
