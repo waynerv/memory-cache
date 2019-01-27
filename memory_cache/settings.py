@@ -11,6 +11,16 @@ class BaseConfig(object):
     APP_UPLOAD_PATH = os.path.join(basedir, 'uploads')
     APP_MAIL_SUBJECT_PREFIX = '[MemoryCache]'
     APP_ADMIN_EMAIL = 'ampedee@163.com'
+    APP_PHOTO_SIZE = {'small': 400, 'medium': 800}
+    APP_PHOTO_SUFFIX = {
+        APP_PHOTO_SIZE['small']: '_s',
+        APP_PHOTO_SIZE['medium']: '_m',
+    }
+
+    DROPZONE_MAX_FILE_SIZE = 3
+    DROPZONE_MAX_FILES = 30
+    DROPZONE_ALLOWED_FILE_TYPE = 'image'
+    DROPZONE_ENABLE_CSRF = True
 
     MAIL_SERVER = os.getenv('MAIL_SERVER')
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')

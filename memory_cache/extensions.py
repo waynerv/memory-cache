@@ -3,12 +3,16 @@ from flask_login import LoginManager, AnonymousUserMixin
 from flask_mail import Mail
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
+from flask_dropzone import Dropzone
+from flask_wtf.csrf import CSRFProtect
 
 db = SQLAlchemy()
 bootstrap = Bootstrap()
 moment = Moment()
 login_manager = LoginManager()
 mail = Mail()
+dropzone = Dropzone()
+csrf = CSRFProtect()
 
 
 @login_manager.user_loader

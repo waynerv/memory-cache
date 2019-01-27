@@ -18,6 +18,7 @@ bootstrap-flask = "*"
 flask-moment = "*"
 flask-login = "*"
 flask-mail = "*"
+flask-dropzone = "*"
 
 [requires]
 python_version = "3.6"
