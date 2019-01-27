@@ -17,6 +17,9 @@ def register_command(app):
         db.drop_all()
         db.create_all()
 
+        click.echo('Initializing the roles and permissions...')
+        Role.init_role()
+
         click.echo('Generating the administrator...')
         fake_admin()
 

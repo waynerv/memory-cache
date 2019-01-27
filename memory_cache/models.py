@@ -69,6 +69,14 @@ class User(db.Model, UserMixin):
                 self.role = Role.query.filter(Role.name == 'User').first()
             db.session.commit()
 
+    def can(self, permission_name):
+        permission = Permission.query.filter(Permission.name == permission_name).first()
+        return permission is not None and self.role is not None and permission in self.role.permissions
+
+    @property
+    def is_admin(self):
+        return self.role.name == 'Administrator'
+
 
 class Photo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
