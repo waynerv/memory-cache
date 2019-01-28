@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, render_template, request, current_app
+from flask import Blueprint, render_template, request, current_app, send_from_directory
 from flask_login import login_required
 from flask_dropzone import random_filename
 from flask_login import current_user
@@ -36,4 +36,9 @@ def upload():
         )
         db.session.add(photo)
         db.session.commit()
-    return render_template('main.upload.html')
+    return render_template('main/upload.html')
+
+
+@main_bp.route('/avatars/<path:filename>')
+def get_avatar(filename):
+    return send_from_directory(current_app.config['AVATARS_SAVE_PATH'], filename)

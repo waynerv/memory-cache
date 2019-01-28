@@ -19,6 +19,7 @@ flask-moment = "*"
 flask-login = "*"
 flask-mail = "*"
 flask-dropzone = "*"
+flask-avatars = "*"
 
 [requires]
 python_version = "3.6"

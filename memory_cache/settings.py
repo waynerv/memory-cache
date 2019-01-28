@@ -8,6 +8,13 @@ class BaseConfig(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     MAX_CONTENT_LENGTH = 3 * 1024 * 1024
 
+    MAIL_SERVER = os.getenv('MAIL_SERVER')
+    MAIL_USERNAME = os.getenv('MAIL_USERNAME')
+    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+    MAIL_PORT = 465
+    MAIL_USE_SSL = True
+    MAIL_DEFAULT_SENDER = ('MemoryCache Admin', 'noreply@shallwecode.top')
+
     APP_UPLOAD_PATH = os.path.join(basedir, 'uploads')
     APP_MAIL_SUBJECT_PREFIX = '[MemoryCache]'
     APP_ADMIN_EMAIL = 'ampedee@163.com'
@@ -22,12 +29,8 @@ class BaseConfig(object):
     DROPZONE_ALLOWED_FILE_TYPE = 'image'
     DROPZONE_ENABLE_CSRF = True
 
-    MAIL_SERVER = os.getenv('MAIL_SERVER')
-    MAIL_USERNAME = os.getenv('MAIL_USERNAME')
-    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
-    MAIL_PORT = 465
-    MAIL_USE_SSL = True
-    MAIL_DEFAULT_SENDER = ('MemoryCache Admin', 'noreply@shallwecode.top')
+    AVATARS_UPLOAD_PATH = os.path.join(APP_UPLOAD_PATH, 'avatars')
+    AVATARS_SIZE_TUPLE = (30, 100, 200)
 
 
 class DevelopmentConfig(BaseConfig):

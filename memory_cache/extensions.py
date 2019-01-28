@@ -5,6 +5,7 @@ from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 from flask_dropzone import Dropzone
 from flask_wtf.csrf import CSRFProtect
+from flask_avatars import Avatars
 
 db = SQLAlchemy()
 bootstrap = Bootstrap()
@@ -13,6 +14,7 @@ login_manager = LoginManager()
 mail = Mail()
 dropzone = Dropzone()
 csrf = CSRFProtect()
+avatars = Avatars()
 
 
 @login_manager.user_loader
@@ -29,6 +31,7 @@ class Guest(AnonymousUserMixin):
 
     def can(self, permission_name):
         return False
+
 
 login_manager.login_view = 'auth.login'
 login_manager.login_message = 'Please log in to continue.'

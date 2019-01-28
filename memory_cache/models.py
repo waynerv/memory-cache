@@ -2,6 +2,7 @@ from datetime import datetime
 
 from flask import current_app
 from flask_login import UserMixin
+from flask_avatars import Identicon
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from memory_cache.extensions import db
@@ -55,6 +56,11 @@ class User(db.Model, UserMixin):
     role = db.relationship('Role', back_populates='users')
     comments = db.relationship('Comment', back_populates='author')
 
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        self.set_role()
+        self.generate_avatar()
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -67,7 +73,6 @@ class User(db.Model, UserMixin):
                 self.role = Role.query.filter(Role.name == 'Administrator').first()
             else:
                 self.role = Role.query.filter(Role.name == 'User').first()
-            db.session.commit()
 
     def can(self, permission_name):
         permission = Permission.query.filter(Permission.name == permission_name).first()
@@ -76,6 +81,13 @@ class User(db.Model, UserMixin):
     @property
     def is_admin(self):
         return self.role.name == 'Administrator'
+
+    def generate_avatar(self):
+        avatar = Identicon()
+        filename = avatar.generate(text=self.name)
+        self.avatar_s = filename[0]
+        self.avatar_m = filename[1]
+        self.avatar_l = filename[2]
 
 
 class Photo(db.Model):
