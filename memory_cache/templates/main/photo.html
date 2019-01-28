@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/form.html' import render_form, render_field %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+
+{% block title %}{{ photo.user.name }}'s Photo{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="photo">
+                <a href="{{ url_for('.get_image', filename=photo.filename) }}" target="_blank">
+                    <img class="img-fluid" src="{{ url_for('main.get_image', filename=photo.filename) }}">
+                </a>
+            </div>
+            <a class="btn btn-light btn-sm" data-toggle="modal" data-target="#shareModal">Share</a>
+            <p class="text-muted float-right small">
+                <span class="oi oi-clock"> Upload at {{ moment(photo.timestamp).format('LL') }}</span>
+            </p>
+            {% include 'main/_comment.html' %}
+        </div>
+        <div class="col-md-4">
+            {% include 'main/_photo_sidebar.html' %}
+        </div>
+    </div>
+{% endblock %}

@@ -63,6 +63,8 @@ def fake_photo(count=50):
     # photo
     upload_path = current_app.config['APP_UPLOAD_PATH']
     for i in range(count):
+        print(i)
+
         filename = f'random_{i}.jpg'
         img = Image.new(mode='RGB', size=(800, 800),
                         color=(random.randint(128, 255), random.randint(64, 255), random.randint(64, 196)))
@@ -71,6 +73,8 @@ def fake_photo(count=50):
         photo = Photo(
             description=fake.sentence(),
             filename=filename,
+            filename_m=filename,
+            filename_s=filename,
             author_id=random.randint(1, User.query.count()),
             timestamp=fake.date_this_year()
         )

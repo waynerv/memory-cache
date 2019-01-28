@@ -15,6 +15,7 @@ def confirm_required(view):
             flash(message, 'warning')
             return redirect(url_for('auth.login'))
         return view(*args, **kwargs)
+
     return wrapped_view
 
 
@@ -25,7 +26,9 @@ def permission_required(permission_name):
             if not current_user.can(permission_name):
                 abort(403)
             return func(*args, **kwargs)
+
         return wrapped_func
+
     return decorator
 
 

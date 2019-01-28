@@ -55,6 +55,9 @@ class User(db.Model, UserMixin):
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     role = db.relationship('Role', back_populates='users')
     comments = db.relationship('Comment', back_populates='author')
+    avatar_s = db.Column(db.String(64))
+    avatar_m = db.Column(db.String(64))
+    avatar_l = db.Column(db.String(64))
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -84,10 +87,10 @@ class User(db.Model, UserMixin):
 
     def generate_avatar(self):
         avatar = Identicon()
-        filename = avatar.generate(text=self.name)
-        self.avatar_s = filename[0]
-        self.avatar_m = filename[1]
-        self.avatar_l = filename[2]
+        filenames = avatar.generate(text=self.username)
+        self.avatar_s = filenames[0]
+        self.avatar_m = filenames[1]
+        self.avatar_l = filenames[2]
 
 
 class Photo(db.Model):

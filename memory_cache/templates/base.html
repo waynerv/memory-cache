@@ -11,8 +11,9 @@
         <link href="{{ url_for('static', filename='favicon.png') }}" rel="icon">
         {% block styles %}
         <!-- Bootstrap core CSS -->
-        <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
-        <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='open-iconic/font/css/open-iconic-bootstrap.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
         {% endblock styles %}
     {% endblock head %}
   </head>

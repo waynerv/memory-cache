@@ -10,6 +10,7 @@ from memory_cache.blueprints.user import user_bp
 from memory_cache.commands import register_command
 from memory_cache.extensions import db, bootstrap, moment, login_manager, mail, dropzone, csrf, avatars
 from memory_cache.settings import config
+from memory_cache.models import User
 
 
 def create_app(config_name=None):
@@ -58,4 +59,4 @@ def register_template_context(app):
 def register_shell_context(app):
     @app.shell_context_processor
     def make_shell_context():
-        return dict(db=db)
+        return dict(db=db, User=User)

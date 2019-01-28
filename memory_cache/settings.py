@@ -23,13 +23,14 @@ class BaseConfig(object):
         APP_PHOTO_SIZE['small']: '_s',
         APP_PHOTO_SIZE['medium']: '_m',
     }
+    APP_PHOTO_PER_PAGE = 12
 
     DROPZONE_MAX_FILE_SIZE = 3
     DROPZONE_MAX_FILES = 30
     DROPZONE_ALLOWED_FILE_TYPE = 'image'
     DROPZONE_ENABLE_CSRF = True
 
-    AVATARS_UPLOAD_PATH = os.path.join(APP_UPLOAD_PATH, 'avatars')
+    AVATARS_SAVE_PATH = os.path.join(APP_UPLOAD_PATH, 'avatars')
     AVATARS_SIZE_TUPLE = (30, 100, 200)
 
 
