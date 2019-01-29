@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired, Length, Optional
 
 
 class DescriptionForm(FlaskForm):
-    description = TextAreaField('Description', validators=[Optional(), Length(1, 140)])
+    description = TextAreaField('Description', validators=[Optional(), Length(0, 140)])
     submit = SubmitField()
 
 

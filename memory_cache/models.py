@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from flask import current_app
@@ -105,6 +106,7 @@ class Photo(db.Model):
     comments = db.relationship('Comment', back_populates='photo', cascade='all, delete')
     tags = db.relationship('Tag', secondary=tagging, back_populates='photos')
     collectors = db.relationship('Collect', back_populates='collected', cascade='all')
+    flag = db.Column(db.Integer)
 
 
 class Comment(db.Model):
@@ -169,3 +171,13 @@ class Permission(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
     roles = db.relationship('Role', secondary=roles_permissions, back_populates='permissions')
+
+
+@db.event.listens_for(Photo, 'after_delete', named=True)
+def delete_photos(**kwargs):
+    target = kwargs['target']
+    for filename in target.filename, target.filename_s, target.filename_m:
+        if filename is not None:
+            path = os.path.join(current_app.config['APP_UPLOAD_PATH'], filename)
+            if os.path.exists(path):
+                os.remove(path)

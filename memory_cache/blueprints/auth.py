@@ -1,5 +1,5 @@
-from flask import Blueprint, redirect, url_for, render_template, flash
-from flask_login import current_user, login_required, login_user
+from flask import Blueprint, redirect, url_for, render_template, flash, abort
+from flask_login import current_user, login_required, login_user, logout_user
 
 from memory_cache.emails import send_confirm_email, send_reset_password_email
 from memory_cache.extensions import db
@@ -114,3 +114,13 @@ def reset_password(token):
             flash('Invalid or expired token.', 'danger')
             return redirect(url_for('auth.forget_password'))
     return render_template('auth/reset_password.html', form=form)
+
+
+@auth_bp.route('/logout')
+@login_required
+def logout():
+    if not current_user.is_authenticated:
+        abort(403)
+    logout_user()
+    flash('Log out success.', 'success')
+    return redirect(url_for('main.index'))
