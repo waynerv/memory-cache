@@ -1,0 +1,81 @@
+<div class="comments" id="comments">
+    <h3>{{ pagination.total }} Comments
+        <small>
+            <a href="{{ url_for('main.show_photo', photo_id=photo.id, page=pagination.pages or 1) }}#comments">
+                earliest
+            </a>
+        </small>
+    {% if current_user == photo.author %}
+        <form class="float-right" method="post"
+              action="{{ url_for('main.set_comment', photo_id=photo.id, next=request.full_path) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-warning btn-sm">
+                {% if photo.can_comment %}Disabled{% else %}Enable{% endif %} Comment
+            </button>
+        </form>
+    {% endif %}
+    </h3>
+    {% if comments %}
+        <ul class="list-group">
+            {% for comment in comments %}
+                <li class="list-group-item list-group-item-action flex-column">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">
+                            <a href="{{ url_for('user.index', username=comment.author.username) }}"
+                               target="_blank">
+                                {{ comment.author.name }}
+                            </a>
+                            {% if comment.author == photo.author %}
+                                <span class="badge badge-primary">Author</span>
+                            {% endif %}
+                            {% if comment.replied %}
+                                <span class="badge badge-light">Reply</span>
+                            {% endif %}
+                        </h5>
+                        <small data-toggle="tooltip" data-placement="top" data-delay="500"
+                               data-timestamp="{{ comment.timestamp.strftime('%Y-%m-%dT%H:%M:%SZ') }}">
+                            {{ moment(comment.timestamp).fromNow(refresh=True) }}
+                        </small>
+                    </div>
+                    {% if comment.replied %}
+                        <p class="alert alert-dark reply-body">
+                            {{ comment.replied.author }}:
+                            <br>{{ comment.replied.body }}
+                        </p>
+                    {% endif %}
+                    <p class="mb-1">{{ comment.body }}</p>
+                    <div class="float-right">
+                        <a class="btn btn-light btn-sm"
+                           href="{{ url_for('main.reply_comment', comment_id=comment.id) }}">Reply</a>
+                        {% if current_user == photo.author or current_user == comment.author %}
+                            <a class="btn btn-danger btn-sm text-white" data-toggle="modal" data-target="#confirm-delete"
+                   data-href="{{ url_for('main.delete_comment', comment_id=comment.id) }}">Delete</a>
+                        {% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="tip"><h5>No comments.</h5></div>
+    {% endif %}
+</div>
+    {% if comments %}
+        <div class="page-footer">
+            {{ render_pagination(pagination, fragment='#comments') }}
+        </div>
+    {% endif %}
+    {% if request.args.get('reply') %}
+        <div class="alert alert-dark">
+            Reply to<strong>{{ request.args.get('author') }}</strong>:
+            <a class="float-right" href="{{ url_for('main.show_photo', photo_id=photo.id) }}">Cancel</a>
+        </div>
+    {% endif %}
+    {% if photo.can_comment %}
+        <div id="comment-form">
+            {{ render_form(comment_form, action=request.full_path) }}
+        </div>
+    {% else %}
+        <div class="tip">
+            <h5>Comment disabled.</h5>
+        </div>
+    {% endif %}

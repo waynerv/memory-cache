@@ -24,6 +24,7 @@ class BaseConfig(object):
         APP_PHOTO_SIZE['medium']: '_m',
     }
     APP_PHOTO_PER_PAGE = 12
+    APP_COMMENT_PER_PAGE = 10
 
     DROPZONE_MAX_FILE_SIZE = 3
     DROPZONE_MAX_FILES = 30

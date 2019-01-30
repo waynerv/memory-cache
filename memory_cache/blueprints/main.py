@@ -5,10 +5,10 @@ from flask_dropzone import random_filename
 from flask_login import current_user
 
 from memory_cache.decorators import permission_required, confirm_required
-from memory_cache.models import Photo, Tag
+from memory_cache.models import Photo, Tag, Comment
 from memory_cache.extensions import db
 from memory_cache.utils import resize_image
-from memory_cache.forms.main import DescriptionForm, TagForm
+from memory_cache.forms.main import DescriptionForm, TagForm, CommentForm
 
 main_bp = Blueprint('main', __name__)
 
@@ -58,10 +58,16 @@ def get_image(filename):
 @main_bp.route('/photo/<int:photo_id>')
 def show_photo(photo_id):
     photo = Photo.query.get_or_404(photo_id)
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['APP_COMMENT_PER_PAGE']
+    pagination = Comment.query.with_parent(photo).order_by(Comment.timestamp.desc()).paginate(page, per_page)
+    comments = pagination.items
+    comment_form = CommentForm()
     description_form = DescriptionForm()
     tag_form = TagForm()
     description_form.description.data = photo.description
-    return render_template('main/photo.html', photo=photo, description_form=description_form, tag_form=tag_form)
+    return render_template('main/photo.html', photo=photo, pagination=pagination, comments=comments,
+                           description_form=description_form, tag_form=tag_form, comment_form=comment_form)
 
 
 @main_bp.route('/photo/n/<int:photo_id>')
@@ -189,3 +195,21 @@ def show_tag(tag_id, order):
         photos.sort(key=lambda x: len(x.collectors), reverse=True)
         order_rule = 'collects'
     return render_template('main/tag.html', tag=tag, pagination=pagination, photos=photos, order_rule=order_rule)
+
+
+@main_bp.route('/photo/set-comment/<int:photo_id>', methods=['POST'])
+@login_required
+def set_comment(photo_id):
+    pass
+
+
+@main_bp.route('/photo/reply/<int:comment_id>', methods=['POST'])
+@login_required
+def reply_comment(comment_id):
+    pass
+
+
+@main_bp.route('/photo/delete/<int:comment_id>', methods=['POST'])
+@login_required
+def delete_comment(comment_id):
+    pass
