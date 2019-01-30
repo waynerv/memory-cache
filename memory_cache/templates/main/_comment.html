@@ -20,13 +20,16 @@
             <div class="comment">
                 <div class="comment-thumbnail">
                     <a href="{{ url_for('user.index', username=comment.author.username) }}">
-                        <img class="rounded img-fluid avatar-s"
+                        <img class="rounded img-fluid avatar-s profile-popover"
+                             data-href="{{ url_for('ajax.get_profile', user_id=comment.author.id) }}"
                              src="{{ url_for('main.get_avatar', filename=comment.author.avatar_s) }}">
                     </a>
                 </div>
                 <div class="comment-body">
                     <h6>
-                        <a href="{{ url_for('user.index', username=comment.author.username) }}">
+                        <a class="profile-popover"
+                           data-href="{{ url_for('ajax.get_profile', user_id=comment.author.id) }}"
+                           href="{{ url_for('user.index', username=comment.author.username) }}">
                             {{ comment.author.name }}
                         </a>
                         {% if comment.author == photo.author %}
@@ -56,8 +59,8 @@
                                                 <span class="oi oi-trash" aria-hidden="true"></span> Delete
                                             </a>
                                         {% endif %}
-                                            <form class="inline" method="post"
-                                                  action="{{ url_for('.report_comment', comment_id=comment.id) }}">
+                                        <form class="inline" method="post"
+                                              action="{{ url_for('.report_comment', comment_id=comment.id) }}">
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                 <button type="submit" class="dropdown-item">
                                                     <span class="oi oi-warning" aria-hidden="true"></span> Report
