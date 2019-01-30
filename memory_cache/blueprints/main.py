@@ -7,7 +7,7 @@ from flask_login import current_user
 from memory_cache.decorators import permission_required, confirm_required
 from memory_cache.models import Photo, Tag, Comment
 from memory_cache.extensions import db
-from memory_cache.utils import resize_image
+from memory_cache.utils import resize_image, redirect_back
 from memory_cache.forms.main import DescriptionForm, TagForm, CommentForm
 
 main_bp = Blueprint('main', __name__)
@@ -55,13 +55,15 @@ def get_image(filename):
     return send_from_directory(current_app.config['APP_UPLOAD_PATH'], filename)
 
 
-@main_bp.route('/photo/<int:photo_id>')
+@main_bp.route('/photo/<int:photo_id>', methods=['GET', 'POST'])
 def show_photo(photo_id):
     photo = Photo.query.get_or_404(photo_id)
+
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['APP_COMMENT_PER_PAGE']
     pagination = Comment.query.with_parent(photo).order_by(Comment.timestamp.desc()).paginate(page, per_page)
     comments = pagination.items
+
     comment_form = CommentForm()
     description_form = DescriptionForm()
     tag_form = TagForm()
@@ -141,7 +143,7 @@ def edit_description(photo_id):
 
 @main_bp.route('/photo/<int:photo_id>/tags', methods=['POST'])
 @login_required
-def add_tags(photo_id):
+def new_tag(photo_id):
     photo = Photo.query.get_or_404(photo_id)
     if current_user != photo.author:
         abort(403)
@@ -163,7 +165,7 @@ def add_tags(photo_id):
 
 @main_bp.route('/delete/tag/<int:photo_id>/<int:tag_id>', methods=['POST'])
 @login_required
-def delete_tags(photo_id, tag_id):
+def delete_tag(photo_id, tag_id):
     photo = Photo.query.get_or_404(photo_id)
     tag = Tag.query.get_or_404(tag_id)
     if current_user != photo.author:
@@ -185,6 +187,7 @@ def delete_tags(photo_id, tag_id):
 @main_bp.route('/tag/<int:tag_id>/<order>')
 def show_tag(tag_id, order):
     tag = Tag.query.get_or_404(tag_id)
+
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['APP_PHOTO_PER_PAGE']
     order_rule = 'time'
@@ -199,17 +202,62 @@ def show_tag(tag_id, order):
 
 @main_bp.route('/photo/set-comment/<int:photo_id>', methods=['POST'])
 @login_required
+@permission_required('COMMENT')
+def new_comment(photo_id):
+    photo = Photo.query.get_or_404(photo_id)
+    page = request.args.get('page', 1, type=int)
+
+    form = CommentForm()
+    if form.validate_on_submit():
+        body = form.body.data
+        comment = Comment(
+            body=body,
+            photo=photo,
+            author=current_user._get_current_object()
+        )
+        replied_id = request.args.get('reply')
+        if replied_id:
+            comment.replied = Comment.query.get_or_404(replied_id)
+        db.session.add(comment)
+        db.session.commit()
+        flash('Comment published.', 'success')
+    return redirect(url_for('main.show_photo', photo_id=photo_id, page=page))
+
+
+@main_bp.route('/photo/set-comment/<int:photo_id>', methods=['POST'])
+@login_required
 def set_comment(photo_id):
-    pass
+    photo = Photo.query.get_or_404(photo_id)
+    if current_user != photo.author:
+        abort(403)
+
+    if photo.can_comment:
+        photo.can_comment = False
+        flash('Comment disabled.', 'success')
+    else:
+        photo.can_comment = True
+        flash('Comment enabled', 'success')
+    db.session.commit()
+    return redirect(url_for('main.show_photo', photo_id=photo_id))
 
 
-@main_bp.route('/photo/reply/<int:comment_id>', methods=['POST'])
+@main_bp.route('/photo/reply/<int:comment_id>')
 @login_required
 def reply_comment(comment_id):
-    pass
+    comment = Comment.query.get_or_404(comment_id)
+    return redirect(url_for('main.show_photo', photo_id=comment.photo.id, reply=comment.id,
+                            author=comment.author.name) + '#comment-form')
 
 
 @main_bp.route('/photo/delete/<int:comment_id>', methods=['POST'])
 @login_required
 def delete_comment(comment_id):
-    pass
+    comment = Comment.query.get_or_404(comment_id)
+    if current_user != comment.author or current_user != comment.photo.author:
+        abort(403)
+
+    page = request.args.get('page', 1, type=int)
+    db.session.delete(comment)
+    db.session.commit()
+    flash('Comment deleted.', 'success')
+    return redirect(url_for('main.show_photo', photo_id=comment.photo.id, page=page))

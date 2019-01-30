@@ -39,7 +39,7 @@
                     </div>
                     {% if comment.replied %}
                         <p class="alert alert-dark reply-body">
-                            {{ comment.replied.author }}:
+                            {{ comment.replied.author.name }}:
                             <br>{{ comment.replied.body }}
                         </p>
                     {% endif %}
@@ -66,13 +66,17 @@
     {% endif %}
     {% if request.args.get('reply') %}
         <div class="alert alert-dark">
-            Reply to<strong>{{ request.args.get('author') }}</strong>:
+            Reply to <strong>{{ request.args.get('author') }}</strong>:
             <a class="float-right" href="{{ url_for('main.show_photo', photo_id=photo.id) }}">Cancel</a>
         </div>
     {% endif %}
-    {% if photo.can_comment %}
+    {% if photo.can_comment and current_user.is_authenticated %}
         <div id="comment-form">
-            {{ render_form(comment_form, action=request.full_path) }}
+            {{ render_form(comment_form, action=url_for('main.new_comment', photo_id=photo.id, reply=request.args.get('reply'))) }}
+        </div>
+    {% elif photo.can_comment and not current_user.is_authenticated %}
+        <div class="tip">
+            <h5>Please <a href="{{ url_for('auth.login') }}">log in</a>.</h5>
         </div>
     {% else %}
         <div class="tip">
