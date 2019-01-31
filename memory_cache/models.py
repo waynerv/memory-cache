@@ -64,6 +64,7 @@ class User(db.Model, UserMixin):
         super(User, self).__init__(**kwargs)
         self.set_role()
         self.generate_avatar()
+        self.follow(self) # 关注自己
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -107,6 +108,27 @@ class User(db.Model, UserMixin):
 
     def is_collecting(self, photo):
         return Collect.query.with_parent(self).filter_by(collected_id=photo.id).first() is not None
+
+    def follow(self, user):
+        if not self.is_following(user):
+            follow = Follow(follower=self, followed=user)
+            db.session.add(follow)
+            db.session.commit()
+
+    def unfollow(self, user):
+        follow = self.following.filter_by(followed_id=user.id).first()
+        if follow:
+            db.session.delete(follow)
+            db.session.commit()
+
+    def is_following(self, user):
+        if user.id is None:
+            return False
+        return self.following.filter_by(followed_id=user.id).first() is not None
+
+    def is_followed_by(self, user):
+        return self.followers.filter_by(follower_id=user.id).first() is not None
+
 
 
 class Photo(db.Model):

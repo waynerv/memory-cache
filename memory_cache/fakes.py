@@ -89,6 +89,17 @@ def fake_photo(count=50):
     db.session.commit()
 
 
+def fake_collect(count=50):
+    for i in range(count):
+        user = User.query.get(random.randint(1, User.query.count()))
+        user.collect(Photo.query.get(random.randint(1, Photo.query.count())))
+
+
+def fake_follow(count=30):
+    for i in range(count):
+        user = User.query.get(random.randint(1, User.query.count()))
+        user.follow(User.query.get(random.randint(1, User.query.count())))
+
 def fake_comment(count=100):
     for i in range(count):
         comment = Comment(

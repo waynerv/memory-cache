@@ -10,9 +10,12 @@ def register_command(app):
     @click.option('--photo', default=50, help='Quantity of photos, default is 50')
     @click.option('--tag', default=20, help='Quantity of tags, default is 20')
     @click.option('--comment', default=100, help='Quantity of comments, default is 100')
-    def forge(user, photo, tag, comment):
+    @click.option('--collect', default=50, help='Quantity of collects, default is 50')
+    @click.option('--follow', default=30, help='Quantity of follows, default is 30')
+    def forge(user, photo, tag, comment, collect, follow):
         '''Forge data'''
-        from memory_cache.fakes import fake_admin, fake_comment, fake_photo, fake_user, fake_tag
+        from memory_cache.fakes import fake_admin, fake_comment, fake_photo, fake_user, fake_tag, fake_collect, \
+            fake_follow
 
         db.drop_all()
         db.create_all()
@@ -31,6 +34,12 @@ def register_command(app):
 
         click.echo(f'Generating {photo} photos...')
         fake_photo(photo)
+
+        click.echo(f'Generating {collect} collects...')
+        fake_collect(collect)
+
+        click.echo(f'Generating {follow} follows...')
+        fake_follow(follow)
 
         click.echo(f'Generating {comment} comments...')
         fake_comment(comment)
@@ -54,4 +63,3 @@ def register_command(app):
         click.echo('Initializing the roles and permissions...')
         Role.init_role()
         click.echo('Done')
-
