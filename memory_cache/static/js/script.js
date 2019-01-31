@@ -69,12 +69,55 @@ function hide_profile_popover(e) {
     }
 }
 $('.profile-popover').hover(show_profile_popover.bind(this), hide_profile_popover.bind(this));
-var flash =bull;
+var flash =null;
 function toast(body) {
-    clearTimeout(flash)
+    clearTimeout(flash);
     var $toast = $('#toast');
     $toast.text(body).fadeIn();
     flash = setTimeout(function () {
         $toast.fadeOut();
     }, 3000)
+}
+function follow(e) {
+    var $el = $(e.target);
+    var id = $el.data('id');
+
+    $.ajax({
+        type: 'POST',
+        url: $el.data('href'),
+        success: function (data) {
+            $el.prev().show();
+            $el.hide();
+            update_followers_count(id);
+            toast('User followed.');
+        },
+        error: function (error) {
+            toast('Server error, please try again later.');
+        }
+    });
+}
+
+function unfollow(e) {
+    var $el = $(e.target);
+    var id = $el.data('id');
+
+    $.ajax({
+        type: 'POST',
+        url: $el.data('href'),
+        success: function (data) {
+            $el.next().show();
+            $el.hide();
+            update_followers_count(id);
+            toast('Follow canceled.');
+        },
+        error: function (error) {
+            toast('Server error, please try again later.')
+        }
+    });
+}
+$(document).on('click', '.follow-btn', follow.bind(this));
+$(document).on('click', '.unfollow-btn', unfollow.bind(this));
+
+function update_followers_count(e) {
+    console.log('ho')
 }
