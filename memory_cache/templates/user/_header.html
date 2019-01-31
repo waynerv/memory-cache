@@ -1,4 +1,5 @@
 {% from 'bootstrap/nav.html' import render_nav_itme %}
+{% from 'macros.html' import follow_area with context %}
 
 <div class="row">
     <div class="col-md-3">
@@ -22,11 +23,18 @@
             <span class="oi oi-calendar"></span>
             Joined {{ moment(user.member_since).format('LL') }}
         </p>
+        <div>
+            <div class="float-right">
+                {{ follow_area(user) }}
+            </div>
+        </div>
     </div>
 </div>
 <div class="user-nav">
     <ul class="nav nav-tabs">
         {{ render_nav_item('user.index', 'Photo', user.photos|length, use_li=True, username=user.username) }}
         {{ render_nav_item('user.show_collections', 'Collections', user.collections|length, use_li=True, username=user.username) }}
+        {{ render_nav_item('user.show_followers', 'Followers', user.followers.count() - 1, use_li=True, username=user.username) }}
+        {{ render_nav_item('user.show_following', 'Following', user.following.count() - 1, use_li=True, username=user.username) }}
     </ul>
 </div>

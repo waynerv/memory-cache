@@ -1,7 +1,7 @@
 from flask import Blueprint, request, current_app, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 from memory_cache.decorators import confirm_required, permission_required
-from memory_cache.models import User, Photo, Collect
+from memory_cache.models import User, Photo, Collect, Follow
 from memory_cache.utils import redirect_back
 
 user_bp = Blueprint('user', __name__)
@@ -38,7 +38,7 @@ def follow(username):
         return redirect_back()
 
     current_user.follow(user)
-    flash('Photo followed.', 'success')
+    flash('User followed.', 'success')
     return redirect_back()
 
 
@@ -53,5 +53,25 @@ def unfollow(username):
         return redirect_back()
 
     current_user.unfollow(user)
-    flash('Photo unfollowed.', 'success')
+    flash('User unfollowed.', 'success')
     return redirect_back()
+
+
+@user_bp.route('/<username>/followers')
+def show_followers(username):
+    user = User.query.filter(User.username == username).first_or_404()
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['APP_USER_PER_PAGE']
+    pagination = user.followers.order_by(Follow.timestamp.desc()).paginate(page, per_page)
+    follows = pagination.items
+    return render_template('user/followers.html', user=user, pagination=pagination, follows=follows)
+
+
+@user_bp.route('/<username>/following')
+def show_following(username):
+    user = User.query.filter(User.username == username).first_or_404()
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['APP_USER_PER_PAGE']
+    pagination = user.following.order_by(Follow.timestamp.desc()).paginate(page, per_page)
+    follows = pagination.items
+    return render_template('user/following.html', user=user, pagination=pagination, follows=follows)

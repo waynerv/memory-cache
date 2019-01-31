@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+{% from 'macros.html' import user_card with context %}
+
+{% block title %}Followers{% endblock title %}
+
+{% block content %}
+    {% include 'user/_header.html' %}
+    <div class="row">
+        <div class="col-md-12">
+            {% if follows|length != 1 %}
+                {% for follow in follows %}
+                    {% if current_user != follow.follower %}
+                        {{ user_card(follow.follower) }}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div class="tip text-center">
+                    <h3>No followers.</h3>
+                    {% if user == current_user %}
+                        <a class="btn btn-link" href="{{ url_for('main.explore') }}">Explore</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% if collects %}
+        <div class="page-footer">
+            {{ render_pagination(pagination, align='center') }}
+        </div>
+    {% endif %}
+{% endblock content %}

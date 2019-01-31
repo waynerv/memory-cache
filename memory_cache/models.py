@@ -143,7 +143,7 @@ class Photo(db.Model):
     comments = db.relationship('Comment', back_populates='photo', cascade='all, delete')
     tags = db.relationship('Tag', secondary=tagging, back_populates='photos')
     collectors = db.relationship('Collect', back_populates='collected', cascade='all')
-    flag = db.Column(db.Integer)
+    flag = db.Column(db.Integer, default=0)
     can_comment = db.Column(db.Boolean, default=True)
 
 
@@ -158,7 +158,7 @@ class Comment(db.Model):
     replied_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
     replied = db.relationship('Comment', remote_side=[id], back_populates='replies')
     replies = db.relationship('Comment', back_populates='replied', cascade='all, delete-orphan')
-    flag = db.Column(db.Integer)
+    flag = db.Column(db.Integer, default=0)
 
 
 class Tag(db.Model):

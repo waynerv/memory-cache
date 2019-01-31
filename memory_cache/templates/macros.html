@@ -12,7 +12,7 @@
 
 {% macro user_card(user) %}
     <div class="user-card text-center">
-        <a href="{{ url_for('user.index', username=username) }}">
+        <a href="{{ url_for('user.index', username=user.username) }}">
             <img class="rounded avatar-m" src="{{ url_for('main.get_avatar', filename=user.avatar_m) }}">
         </a>
         <h6>
