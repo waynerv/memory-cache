@@ -5,7 +5,7 @@ from flask_dropzone import random_filename
 from flask_login import current_user
 
 from memory_cache.decorators import permission_required, confirm_required
-from memory_cache.models import Photo, Tag, Comment
+from memory_cache.models import Photo, Tag, Comment, Collect
 from memory_cache.extensions import db
 from memory_cache.utils import resize_image, flash_errors
 from memory_cache.forms.main import DescriptionForm, TagForm, CommentForm
@@ -273,3 +273,43 @@ def report_comment(comment_id):
     db.session.commit()
     flash('Comment reported.', 'success')
     return redirect(url_for('.show_photo', photo_id=comment.photo.id))
+
+
+@main_bp.route('/collect/<int:photo_id>', methods=['POST'])
+@login_required
+@confirm_required
+@permission_required('COLLECT')
+def collect(photo_id):
+    photo = Photo.query.get_or_404(photo_id)
+    if current_user.is_collecting(photo):
+        flash('Already collected.', 'info')
+        return redirect(url_for('main.show_photo', photo_id=photo_id))
+
+    current_user.collect(photo)
+    flash('Photo collected.', 'success')
+    return redirect(url_for('main.show_photo', photo_id=photo_id))
+
+
+@main_bp.route('/uncollect/<int:photo_id>', methods=['POST'])
+@login_required
+@confirm_required
+@permission_required('COLLECT')
+def uncollect(photo_id):
+    photo = Photo.query.get_or_404(photo_id)
+    if not current_user.is_collecting(photo):
+        flash('Not collect yet.', 'info')
+        return redirect(url_for('main.show_photo', photo_id=photo_id))
+
+    current_user.uncollect(photo)
+    flash('Photo uncollected.', 'success')
+    return redirect(url_for('main.show_photo', photo_id=photo_id))
+
+
+@main_bp.route('/photo/<int:photo_id>/collectors')
+def show_collectors(photo_id):
+    photo = Photo.query.get_or_404(photo_id)
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['APP_USER_PER_PAGE']
+    pagination = Collect.query.with_parent(photo).order_by(Collect.timestamp.desc()).paginate(page, per_page)
+    collects = pagination.items
+    return render_template('main/collectors.html', photo=photo, collects=collects, pagination=pagination)

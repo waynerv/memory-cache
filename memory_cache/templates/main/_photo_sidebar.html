@@ -67,3 +67,28 @@
         {% endif %}
     </div>
 {% endif %}
+{% if current_user.is_authenticated %}
+    {% if current_user.is_collecting(photo) %} <!-- 显示取消收藏表单 -->
+        <form class="inline" method="post" action="{{ url_for('main.uncollect', photo_id=photo.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-outline-secondary btn-sm">
+                <span class="oi oi-x"></span>Uncollect
+            </button>
+        </form>
+    {% else %} <!-- 显示收藏表单 -->
+        <form class="inline" method="post" action="{{ url_for('main.collect', photo_id=photo.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-outline-secondary btn-sm">
+                <span class="oi oi-star"></span>Collect
+            </button>
+        </form>
+    {% endif %}
+    <a href="{{ url_for('main.show_collectors', photo_id=photo.id) }}">{{ photo.collectors|length }} collectors</a>
+{% else %} <!-- 对未登录用户显示的收藏表单 -->
+    <form class="inline" method="post" action="{{ url_for('main.uncollect', photo_id=photo.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-outline-secondary btn-sm">
+            <span class="oi oi-star"></span>Uncollect
+        </button>
+    </form>
+{% endif %}

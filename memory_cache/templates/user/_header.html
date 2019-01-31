@@ -11,12 +11,13 @@
         {% if user.bio %}<p>{{ user.bio }}</p>{% endif %}
         <p>
             {% if user.website %}
-            <span class="oi oi-link-intact"></span>
-            <a href="{{ user.website }}">{{ user.website|truncate(30) }}</a>&nbsp;&nbsp;
+                <span class="oi oi-link-intact"></span>
+                <a href="{{ user.website }}">{{ user.website|truncate(30) }}</a>&nbsp;&nbsp;
             {% endif %}
             {% if user.location %}
-            <span class="oi oi-map-marker"></span>
-            <a href="https://www.google.com/maps?q={{ user.location }}">{{ user.location|truncate(20) }}</a>&nbsp;&nbsp;
+                <span class="oi oi-map-marker"></span>
+                <a href="https://www.google.com/maps?q={{ user.location }}">{{ user.location|truncate(20) }}</a>&nbsp;
+                &nbsp;
             {% endif %}
             <span class="oi oi-calendar"></span>
             Joined {{ moment(user.member_since).format('LL') }}
@@ -25,6 +26,7 @@
 </div>
 <div class="user-nav">
     <ul class="nav nav-tabs">
-        {{ render_nav_item('user.index', 'Photo', user.photo|length, username=username) }}
+        {{ render_nav_item('user.index', 'Photo', user.photos|length, use_li=True, username=user.username) }}
+        {{ render_nav_item('user.show_collections', 'Collections', user.collections|length, use_li=True, username=user.username) }}
     </ul>
 </div>
