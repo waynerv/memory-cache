@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 from flask import current_app
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 from flask_avatars import Identicon
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -92,6 +92,21 @@ class User(db.Model, UserMixin):
         self.avatar_s = filenames[0]
         self.avatar_m = filenames[1]
         self.avatar_l = filenames[2]
+
+    def collect(self, photo):
+        if not self.is_collecting(photo):
+            collect = Collect(collector=self, collected=photo)
+            db.session.add(collect)
+            db.session.commit()
+
+    def uncollect(self, photo):
+        collect = Collect.query.with_parent(self).filter_by(collected_id=photo.id).first()
+        if collect:
+            db.session.delete(collect)
+            db.session.commit()
+
+    def is_collecting(self, photo):
+        return Collect.query.with_parent(self).filter_by(collected_id=photo.id).first() is not None
 
 
 class Photo(db.Model):

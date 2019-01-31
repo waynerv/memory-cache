@@ -7,7 +7,7 @@ from flask_login import current_user
 from memory_cache.decorators import permission_required, confirm_required
 from memory_cache.models import Photo, Tag, Comment
 from memory_cache.extensions import db
-from memory_cache.utils import resize_image, redirect_back
+from memory_cache.utils import resize_image, flash_errors
 from memory_cache.forms.main import DescriptionForm, TagForm, CommentForm
 
 main_bp = Blueprint('main', __name__)
@@ -137,7 +137,7 @@ def edit_description(photo_id):
         photo.description = form.description.data
         db.session.commit()
         flash('Description updated.', 'success')
-
+    flash_errors(form)
     return redirect(url_for('main.show_photo', photo_id=photo.id))
 
 
@@ -159,7 +159,7 @@ def new_tag(photo_id):
                 photo.tags.append(tag)
                 db.session.commit()
         flash('Tag added.', 'success')
-
+    flash_errors(form)
     return redirect(url_for('main.show_photo', photo_id=photo.id))
 
 
@@ -221,6 +221,7 @@ def new_comment(photo_id):
         db.session.add(comment)
         db.session.commit()
         flash('Comment published.', 'success')
+    flash_errors(form)
     return redirect(url_for('main.show_photo', photo_id=photo_id, page=page))
 
 

@@ -2,7 +2,7 @@ import os
 from PIL import Image
 from urllib.parse import urlparse, urljoin
 
-from flask import request, redirect, url_for, current_app
+from flask import request, redirect, url_for, current_app, flash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadTimeSignature, SignatureExpired
 from memory_cache.settings import Operations
@@ -65,3 +65,10 @@ def resize_image(image, filename, base_width):
     filename += current_app.config['APP_PHOTO_SUFFIX'] + ext
     img.save(os.path.join(current_app.config['APP_UPLOAD_PATH'], filename), optimize=True, quality=85)
     return filename
+
+
+def flash_errors(form):
+    # form.errors以字典形式保存表单的字段以及字段对应的错误信息（均为字符串）
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash("Error in the %s field - %s" % (getattr(form, field).label.text, error))
