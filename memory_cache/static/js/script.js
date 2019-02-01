@@ -163,4 +163,21 @@ function update_followers_count(id) {
     })
 }
 
+function update_notifications_count() {
+    var $el = $('#notification-badge');
+    $.ajax({
+        type: 'GET',
+        url: $el.data('href'),
+        success: function (data) {
+            if (data.count === 0) {
+                $el.hide();
+            } else {
+                $el.show();
+                $el.text(data.count)
+            }
+        }
+    });
+}
+
+if (is_authenticated) { setInterval(update_notifications_count, 30000)}
 

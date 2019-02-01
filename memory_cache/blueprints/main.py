@@ -5,10 +5,11 @@ from flask_dropzone import random_filename
 from flask_login import current_user
 
 from memory_cache.decorators import permission_required, confirm_required
-from memory_cache.models import Photo, Tag, Comment, Collect
+from memory_cache.models import Photo, Tag, Comment, Collect, Notification
 from memory_cache.extensions import db
 from memory_cache.utils import resize_image, flash_errors
 from memory_cache.forms.main import DescriptionForm, TagForm, CommentForm
+from memory_cache.notifications import push_collect_notification, push_comment_notification
 
 main_bp = Blueprint('main', __name__)
 
@@ -221,6 +222,7 @@ def new_comment(photo_id):
         db.session.add(comment)
         db.session.commit()
         flash('Comment published.', 'success')
+        push_comment_notification(photo_id=photo_id, receiver=photo.author, page=page)
     flash_errors(form)
     return redirect(url_for('main.show_photo', photo_id=photo_id, page=page))
 
@@ -287,6 +289,7 @@ def collect(photo_id):
 
     current_user.collect(photo)
     flash('Photo collected.', 'success')
+    push_collect_notification(collector=current_user, photo_id=photo_id, receiver=photo.author)
     return redirect(url_for('main.show_photo', photo_id=photo_id))
 
 
@@ -313,3 +316,41 @@ def show_collectors(photo_id):
     pagination = Collect.query.with_parent(photo).order_by(Collect.timestamp.desc()).paginate(page, per_page)
     collects = pagination.items
     return render_template('main/collectors.html', photo=photo, collects=collects, pagination=pagination)
+
+
+@main_bp.route('/notifications')
+@login_required
+def show_notifications():
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['APP_NOTIFICATION_PER_PAGE']
+    notifications = Notification.query.with_parent(current_user)
+    filter_rule = request.args.get('filter')
+    if filter_rule == 'unread':
+        notifications = notifications.filter_by(is_read=False)
+
+    pagination = notifications.order_by(Notification.timestamp.desc()).paginate(page, per_page)
+    notifications = pagination.items
+    return render_template('main/notifications.html', pagination=pagination, notifications=notifications)
+
+
+@main_bp.route('/notifications/read/<int:notification_id>', methods=['POST'])
+@login_required
+def read_notification(notification_id):
+    notification = Notification.query.get_or_404(notification_id)
+    if current_user != notification.receiver:
+        abort(403)
+
+    notification.is_read = True
+    db.session.commit()
+    flash('Notification archived.', 'success')
+    return redirect(url_for('main.show_notifications'))
+
+
+@main_bp.route('/notifications/read/all', methods=['POST'])
+@login_required
+def read_all_notification():
+    for notification in current_user.notifications:
+        notification.is_read = True
+    db.session.commit()
+    flash('All notifications archived.', 'success')
+    return redirect(url_for('main.show_notifications'))

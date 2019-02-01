@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask_login import current_user
 
 from memory_cache.blueprints.admin import admin_bp
 from memory_cache.blueprints.ajax import ajax_bp
@@ -10,7 +11,7 @@ from memory_cache.blueprints.user import user_bp
 from memory_cache.commands import register_command
 from memory_cache.extensions import db, bootstrap, moment, login_manager, mail, dropzone, csrf, avatars
 from memory_cache.settings import config
-from memory_cache.models import User
+from memory_cache.models import User, Notification
 
 
 def create_app(config_name=None):
@@ -53,8 +54,11 @@ def register_error_handler(app):
 def register_template_context(app):
     @app.context_processor
     def make_template_context():
-        pass
-
+        if current_user.is_authenticated:
+            notification_count = Notification.query.with_parent(current_user).filter_by(is_read=False).count()
+        else:
+            notification_count = None
+        return dict(notification_count=notification_count)
 
 def register_shell_context(app):
     @app.shell_context_processor

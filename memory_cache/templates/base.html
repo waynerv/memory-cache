@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {% from 'bootstrap/nav.html' import render_nav_item %}
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
@@ -10,76 +10,108 @@
         <title>{% block title %}{% endblock title %} - Memory Cache</title>
         <link href="{{ url_for('static', filename='favicon.png') }}" rel="icon">
         {% block styles %}
-        <!-- Bootstrap core CSS -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='open-iconic/font/css/open-iconic-bootstrap.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+            <!-- Bootstrap core CSS -->
+            <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+            <link rel="stylesheet"
+                  href="{{ url_for('static', filename='open-iconic/font/css/open-iconic-bootstrap.css') }}">
+            <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
         {% endblock styles %}
     {% endblock head %}
-  </head>
+</head>
 
-  <body>
+<body>
 
-    <!-- Navigation -->
-    {% block nav %}
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-          <div class="container">
+<!-- Navigation -->
+{% block nav %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
             <a class="navbar-brand" href="{{ url_for('main.index') }}">MemoryCache</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                    aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
-              <ul class="navbar-nav ml-auto">
-                  {% if not current_user.is_authenticated %}
-                      {{ render_nav_item('auth.register', 'Register', use_li=True) }}
-                      {{ render_nav_item('auth.login', 'Log in', use_li=True) }}
-                  {% else %}
-                      {{ render_nav_item('auth.logout', 'Log out', use_li=True) }}
-                  {% endif %}
-              </ul>
+                <ul class="navbar-nav ml-auto">
+                    {% if not current_user.is_authenticated %}
+                        {{ render_nav_item('auth.login', 'Login', use_li=True) }}
+                        {{ render_nav_item('auth.register', 'Register', use_li=True) }}
+                    {% else %}
+                        <a class="nav-item nav-link" href="{{ url_for('main.show_notifications', filter='unread') }}">
+                            <span class="oi oi-bell"></span>
+                            <span id="notification-badge"
+                                  class="{% if notification_count == 0 %}hide{% endif %} badge badge-danger badge-notification"
+                                  data-href="{{ url_for('ajax.notifications_count') }}">{{ notification_count }}</span>
+                        </a>
+                        <a class="nav-item nav-link" href="{{ url_for('main.upload') }}" title="Upload">
+                            <spoan class="oi oi-cloud-upload"></spoan>&nbsp;&nbsp;
+                        </a>
+                        <div class="dropdown nav-item">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-expanded="false">
+                                <img class="avatar-xs" src="{{ url_for('main.get_avatar', filename=current_user.avatar_s) }}">
+                                <span class="caret"></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                <h6 class="dropdown-header">Logged in as {{ current_user.username }}</h6>
+                                <a class="dropdown-item" href="{{ url_for('user.index', username=current_user.username) }}">
+                                    <span class="oi oi-person"></span> My Home
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                    <span class="oi oi-power-standby"></span> Logout
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </ul>
             </div>
-          </div>
-        </nav>
-    {% endblock nav %}
+        </div>
+    </nav>
+{% endblock nav %}
 
-    <!-- Page Content -->
-    <div class="container">
-        {% for message in get_flashed_messages(with_categories=True) %}
-            <div class="alert alert-{{ message[0] }}" role="alert">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {{ message[1] }}
-            </div>
-        {% endfor %}
+<!-- Page Content -->
+<div class="container">
+    {% for message in get_flashed_messages(with_categories=True) %}
+        <div class="alert alert-{{ message[0] }}" role="alert">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message[1] }}
+        </div>
+    {% endfor %}
 
-        {% block content %}
-        {% endblock content %}
+    {% block content %}
+    {% endblock content %}
 
-    </div>
-    <div id="toast"></div>
-    <!-- /.container -->
+</div>
+<div id="toast"></div>
+<!-- /.container -->
 
-    <!-- Footer -->
-    {% block footer %}
-        <footer class="py-5 bg-dark">
-          <div class="container">
+<!-- Footer -->
+{% block footer %}
+    <footer class="py-5 bg-dark">
+        <div class="container">
             <p class="m-0 text-center text-white">Copyright &copy; MemoryCache 2019</p>
-          </div>
-          <!-- /.container -->
-        </footer>
-    {% endblock footer %}
+        </div>
+        <!-- /.container -->
+    </footer>
+{% endblock footer %}
 
-    <!-- Bootstrap core JavaScript -->
-    {% block scripts %}
-        <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-        {{ moment.include_moment(local_js=url_for('static', filename='js/moment-with-locales.js')) }}
-        <script type="text/javascript">
+<!-- Bootstrap core JavaScript -->
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    {{ moment.include_moment(local_js=url_for('static', filename='js/moment-with-locales.js')) }}
+    <script type="text/javascript">
         var csrf_token = '{{ csrf_token() }}';
         var default_error_message = 'Server error, please try again later.';
-        </script>
-        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    {% endblock scripts %}
-  </body>
+        {% if current_user.is_authenticated %}
+        var is_authenticated = true;
+        {% else %}
+        var is_authenticated = false;
+        {% endif %}
+    </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+{% endblock scripts %}
+</body>
 
 </html>

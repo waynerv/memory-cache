@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from memory_cache.decorators import confirm_required, permission_required
 from memory_cache.models import User, Photo, Collect, Follow
 from memory_cache.utils import redirect_back
+from memory_cache.notifications import push_follow_notification
 
 user_bp = Blueprint('user', __name__)
 
@@ -39,6 +40,7 @@ def follow(username):
 
     current_user.follow(user)
     flash('User followed.', 'success')
+    push_follow_notification(follower=current_user, receiver=user)
     return redirect_back()
 
 

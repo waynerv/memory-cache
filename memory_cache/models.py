@@ -47,7 +47,7 @@ class User(db.Model, UserMixin):
     member_since = db.Column(db.DateTime, default=datetime.utcnow())
     confirmed = db.Column(db.Boolean)
     photos = db.relationship('Photo', back_populates='author', cascade='all, delete')
-    notifications = db.relationship('Notification', back_populates='user', cascade='all, delete')
+    notifications = db.relationship('Notification', back_populates='receiver', cascade='all, delete')
     collections = db.relationship('Collect', back_populates='collector', cascade='all')
     following = db.relationship('Follow', foreign_keys=[Follow.follower_id], back_populates='follower', lazy='dynamic',
                                 cascade='all')
@@ -170,10 +170,10 @@ class Tag(db.Model):
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     message = db.Column(db.Text)
-    is_read = db.Column(db.Boolean)
+    is_read = db.Column(db.Boolean, default=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow())
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', back_populates='notifications')
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    receiver = db.relationship('User', back_populates='notifications')
 
 
 class Role(db.Model):
