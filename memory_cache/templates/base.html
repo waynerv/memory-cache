@@ -74,6 +74,10 @@
         <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
         {{ moment.include_moment(local_js=url_for('static', filename='js/moment-with-locales.js')) }}
+        <script type="text/javascript">
+        var csrf_token = '{{ csrf_token() }}';
+        var default_error_message = 'Server error, please try again later.';
+        </script>
         <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     {% endblock scripts %}
   </body>

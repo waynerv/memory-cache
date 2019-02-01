@@ -25,6 +25,54 @@ $(function () {
         {title: render_time}
     );
 });
+
+$.ajaxSetup({
+    beforeSend: function (xhr, settings) {
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader('X-CSRFToken', csrf_token);
+        }
+    }
+});
+
+$(document).ajaxError(function (event, request, settings) {
+    var message = null;
+    if (request.responseJSON && request.responseJSON.hasOwnProperty('message')) {
+        message = request.responseJSON.message
+    } else if (request.responseText) {
+        var IS_JSON = true;
+        try {
+            var data = JSON.parse(request.responseText); // 作为JSON解析
+        }
+        catch(err) {
+            IS_JSON = false
+        }
+
+        if (IS_JSON && data != undefined && data.hasOwnProperty('message')) {
+            message = JSON.parse(request.responseText).message;
+        } else {
+            message = default_error_message; // 使用默认错误消息
+        }
+    } else {
+        message = default_error_message; // 使用默认错误消息
+    }
+    toast(message, 'error'); // 弹出提示消息
+});
+
+var flash =null;
+function toast(body, category) {
+    clearTimeout(flash);
+    var $toast = $('#toast');
+    if (category === 'error') {
+        $toast.css('background-color', 'red') // 错误类型消息
+    } else {
+        $toast.css('background-color', '#333') // 普通类型消息
+    }
+    $toast.text(body).fadeIn();
+    flash = setTimeout(function () {
+        $toast.fadeOut();
+    }, 3000)
+}
+
 var hover_timer = null;
 function show_profile_popover(e) {
     var $el = $(e.target);
@@ -47,13 +95,11 @@ function show_profile_popover(e) {
                         $el.popover('hide');
                     }, 200)
                 });
-            },
-            error: function (error) {
-                toast('Server error, please try again later.');
             }
         });
     }, 500)
 }
+
 function hide_profile_popover(e) {
     var $el = $(e.target);
 
@@ -68,16 +114,9 @@ function hide_profile_popover(e) {
         }, 200);
     }
 }
+
 $('.profile-popover').hover(show_profile_popover.bind(this), hide_profile_popover.bind(this));
-var flash =null;
-function toast(body) {
-    clearTimeout(flash);
-    var $toast = $('#toast');
-    $toast.text(body).fadeIn();
-    flash = setTimeout(function () {
-        $toast.fadeOut();
-    }, 3000)
-}
+
 function follow(e) {
     var $el = $(e.target);
     var id = $el.data('id');
@@ -89,10 +128,7 @@ function follow(e) {
             $el.prev().show();
             $el.hide();
             update_followers_count(id);
-            toast('User followed.');
-        },
-        error: function (error) {
-            toast('Server error, please try again later.');
+            toast(data.message);
         }
     });
 }
@@ -108,16 +144,23 @@ function unfollow(e) {
             $el.next().show();
             $el.hide();
             update_followers_count(id);
-            toast('Follow canceled.');
-        },
-        error: function (error) {
-            toast('Server error, please try again later.')
+            toast(data.message);
         }
     });
 }
+
 $(document).on('click', '.follow-btn', follow.bind(this));
 $(document).on('click', '.unfollow-btn', unfollow.bind(this));
 
-function update_followers_count(e) {
-    console.log('ho')
+function update_followers_count(id) {
+    var $el = $('#followers-count-' + id)
+    $.ajax({
+        type: 'GET',
+        url: $el.data('href'),
+        success: function (data) {
+            $el.text(data.count); // 根据返回的JSON数据更新数字，注意对象的读取方式
+        }
+    })
 }
+
+
