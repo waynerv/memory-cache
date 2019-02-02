@@ -55,8 +55,21 @@ nav {
     margin-bottom: 30px;
 }
 
+/* sticky footer */
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 160px;
+}
+
 footer {
-    margin: 30px 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
     padding: 20px 0;
     border-top: 1px solid #e5e5e5;
 }
@@ -252,6 +265,25 @@ footer {
 
 .comment-form {
     margin: 5px 0 16px 60px;
+}
+
+/* Jcrop widget */
+#preview-box {
+    display: block;
+    position: absolute;
+    top: 10px;
+    right: -280px;
+    padding: 6px;
+    border: 1px rgba(0, 0, 0, .4) solid;
+    background-color: white;
+
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+
+    -webkit-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
 }
 
 /* Photo Page */
