@@ -9,9 +9,14 @@
     <div class="row">
         <div class="col-md-12">
             {% if collects %}
-                {% for collect in collects %}
-                    {{ photo_card(collect.collected) }}
-                {% endfor %}
+                {% if user.public_collections or current_user == user %}
+                    {% for collect in collects %}
+                        {{ photo_card(collect.collected) }}
+                    {% endfor %}
+                {% else %}
+                    <div class="tip">
+                        <h3>This user's collections was private.</h3>
+                    </div>
             {% else %}
                 <div class="tip text-center">
                     <h3>No collections.</h3>

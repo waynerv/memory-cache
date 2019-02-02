@@ -2,8 +2,8 @@ import os
 from datetime import datetime
 
 from flask import current_app
-from flask_login import UserMixin, current_user
 from flask_avatars import Identicon
+from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from memory_cache.extensions import db
@@ -56,15 +56,20 @@ class User(db.Model, UserMixin):
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     role = db.relationship('Role', back_populates='users')
     comments = db.relationship('Comment', back_populates='author')
+    avatar_raw = db.Column(db.String(64))
     avatar_s = db.Column(db.String(64))
     avatar_m = db.Column(db.String(64))
     avatar_l = db.Column(db.String(64))
+    receive_comment_notification = db.Column(db.Boolean, default=True)
+    receive_follow_notification = db.Column(db.Boolean, default=True)
+    receive_collect_notification = db.Column(db.Boolean, default=True)
+    public_collections = db.Column(db.Boolean, default=True)
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         self.set_role()
         self.generate_avatar()
-        self.follow(self) # 关注自己
+        self.follow(self)  # 关注自己
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -128,7 +133,6 @@ class User(db.Model, UserMixin):
 
     def is_followed_by(self, user):
         return self.followers.filter_by(follower_id=user.id).first() is not None
-
 
 
 class Photo(db.Model):
@@ -218,5 +222,15 @@ def delete_photos(**kwargs):
     for filename in target.filename, target.filename_s, target.filename_m:
         if filename is not None:
             path = os.path.join(current_app.config['APP_UPLOAD_PATH'], filename)
+            if os.path.exists(path):
+                os.remove(path)
+
+
+@db.event.listens_for(User, 'after_delete', named=True)
+def delete_avatars(**kwargs):
+    target = kwargs['target']
+    for filename in target.avatar_raw, target.avatar_s, target.avatar_m, target.avatar_l:
+        if filename is not None:
+            path = os.path.join(current_app.config['AVATARS_SAVE_PATH'], filename)
             if os.path.exists(path):
                 os.remove(path)

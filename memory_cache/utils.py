@@ -31,7 +31,7 @@ def generate_token(user, operation, expire_in=None, **kwargs):
     return s.dumps(data)
 
 
-def validate_token(user, token, operation, password=None):
+def validate_token(user, token, operation, new_password=None):
     s = Serializer(current_app.config['SECRET_KEY'])
 
     try:
@@ -45,7 +45,9 @@ def validate_token(user, token, operation, password=None):
     if operation == Operations.CONFIRM:
         user.confirmed = True
     elif operation == Operations.RESET_PASSWORD:
-        user.set_password(password)
+        user.set_password(new_password)
+    elif operation == Operations.CHANGE_EMAIL:
+        user.email = data.get('new_email')
     else:
         return False
 

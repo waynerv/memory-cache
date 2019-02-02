@@ -1,5 +1,5 @@
 from flask import Blueprint, redirect, url_for, render_template, flash, abort
-from flask_login import current_user, login_required, login_user, logout_user
+from flask_login import current_user, login_required, login_user, logout_user, login_fresh, confirm_login
 
 from memory_cache.emails import send_confirm_email, send_reset_password_email
 from memory_cache.extensions import db
@@ -124,3 +124,16 @@ def logout():
     logout_user()
     flash('Log out success.', 'success')
     return redirect(url_for('main.index'))
+
+
+@auth_bp.route('/re-authenticate', methods=['GET', 'POST'])
+@login_required
+def re_authenticated():
+    if login_fresh():
+        return redirect(url_for('main.index'))
+
+    form = LoginForm()
+    if form.validate_on_submit():
+        confirm_login()
+        return redirect_back()
+    return render_template('auth/login.html', form=form)

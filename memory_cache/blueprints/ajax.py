@@ -27,7 +27,8 @@ def follow(username):
         return jsonify(message='Already followed.'), 400
 
     current_user.follow(user)
-    push_follow_notification(follower=current_user, receiver=user)
+    if user.author.receive_follow_notifications:
+        push_follow_notification(follower=current_user, receiver=user)
     return jsonify(message='User followed')
 
 
@@ -52,7 +53,7 @@ def followers_count(user_id):
 
 
 @ajax_bp.route('/notifications-count')
-def notifications_count(user_id):
+def notifications_count():
     if not current_user.is_authenticated:
         return jsonify(message='Login required.'), 403
 

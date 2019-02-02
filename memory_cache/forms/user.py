@@ -12,7 +12,7 @@ class EditProfileForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(1, 20),
                                                    Regexp('^[a-zA-Z0-9]*$',
                                                           message='The username should contain only a-z, A-Z, 0-9.')])
-    website = StringField('Website', validators=[Optional(), URL(), Length(0, 255)])
+    website = StringField('Website', validators=[Optional(), URL(), Length(0, 254)])
     bio = TextAreaField('Bio', validators=[Optional(), Length(0, 120)])
     location = StringField('Location', validators=[Optional(), Length(0, 30)])
     submit = SubmitField()
@@ -23,10 +23,10 @@ class EditProfileForm(FlaskForm):
 
 
 class UploadAvatarForm(FlaskForm):
-    image = FileField('Upload', validators=[
+    image = FileField('Upload (<=3Mb)', validators=[
         FileRequired(), FileAllowed(['jpg', 'png'], message='The file format should be .jpg or.png.')
     ])
-    submit = SubmitField()
+    submit = SubmitField('Upload')
 
 
 class CropAvatarForm(FlaskForm):
@@ -44,6 +44,11 @@ class NotificationSettingForm(FlaskForm):
     submit = SubmitField()
 
 
+class PrivacySettingForm(FlaskForm):
+    public_collections = BooleanField('Public my collections')
+    submit = SubmitField()
+
+
 class ChangePasswordForm(FlaskForm):
     old_password = PasswordField('Old password', validators=[DataRequired(), Length(6, 128)])
     password = PasswordField('New password', validators=[DataRequired(), Length(6, 128), EqualTo('password2')])
@@ -54,6 +59,10 @@ class ChangePasswordForm(FlaskForm):
 class ChangeEmailForm(FlaskForm):
     email = StringField('New email', validators=[DataRequired(), Length(1, 254), Email()])
     submit = SubmitField()
+
+    def validate_email(self, field):
+        if User.query.filter(User.email == field.data).first():
+            raise ValidationError('The email is already in use.')
 
 
 class DeleteAccountForm(FlaskForm):
