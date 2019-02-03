@@ -258,7 +258,7 @@ def new_comment(photo_id):
         db.session.add(comment)
         db.session.commit()
         flash('Comment published.', 'success')
-        if photo.author.receive_comment_notification:
+        if photo.author.receive_comment_notification and current_user != photo.author:
             push_comment_notification(photo_id=photo_id, receiver=photo.author, page=page)
     flash_errors(form)
     return redirect(url_for('main.show_photo', photo_id=photo_id, page=page))
@@ -326,7 +326,7 @@ def collect(photo_id):
 
     current_user.collect(photo)
     flash('Photo collected.', 'success')
-    if photo.author.receive_collect_notification:
+    if photo.author.receive_collect_notification and current_user != photo.author:
         push_collect_notification(collector=current_user, photo_id=photo_id, receiver=photo.author)
     return redirect(url_for('main.show_photo', photo_id=photo_id))
 

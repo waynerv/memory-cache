@@ -75,7 +75,7 @@ def collect(photo_id):
         return jsonify(message='Already collected.'), 400
 
     current_user.collect(photo)
-    if photo.author.receive_collect_notification:
+    if photo.author.receive_collect_notification and current_user != photo.author:
         push_collect_notification(collector=current_user, photo_id=photo_id, receiver=photo.author)
     return jsonify(message='User collected')
 

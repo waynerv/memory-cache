@@ -4,8 +4,8 @@
             <img class="card-img-top portrait" src="{{ url_for('main.get_image', filename=photo.filename_s) }}">
         </a>
         <div class="card-body">
-            <span class="oi oi-star"></span>{{ photo.collectors|length }}
-            <span class="oi oi-comment-square"></span>{{ photo.comments|length }}
+            <span class="oi oi-star"></span> {{ photo.collectors|length }}
+            <span class="oi oi-comment-square"></span> {{ photo.comments|length }}
         </div>
     </div>
 {% endmacro %}
@@ -83,7 +83,7 @@
             <span class="oi oi-star"></span>
             <span id="collectors-count-{{ photo.id }}"
                   data-href="{{ url_for('ajax.collectors_count', photo_id=photo.id) }}">{{ photo.collectors|length }}</span>
-            <span class="oi oi-comment-square"></span>{{ photo.comments|length }}
+            <span class="oi oi-comment-square"></span> {{ photo.comments|length }}
             <div class="float-right">
                 {% if current_user.is_authenticated %}
                     <button data-id="{{ photo.id }}" data-href="{{ url_for('ajax.uncollect', photo_id=photo.id) }}"

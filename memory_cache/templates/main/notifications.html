@@ -35,7 +35,7 @@
                         <ul class="list-group">
                             {% for notification in notifications %}
                                 <li class="list-group-item">
-                                    {{ notification|safe }}
+                                    {{ notification.message|safe }}
                                     <span class="float-right">
                                         {{ moment(notification.timestamp).fromNow(refresh=True) }}
                                         {% if notification.is_read == false %}
