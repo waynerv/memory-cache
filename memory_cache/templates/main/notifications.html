@@ -50,21 +50,17 @@
                                     </span>
                                 </li>
                             {% endfor %}
-
                         </ul>
                         <div class="text-right page-footer">
                             {{ render_pagination(pagination) }}
-                        <div>
+                        </div>
                     {% else %}
                         <div class="tip text-center">
                             <h6>No notifications.</h6>
                         </div>
                     {% endif %}
                 </div>
-
             </div>
         </div>
     </div>
-
-
 {% endblock %}

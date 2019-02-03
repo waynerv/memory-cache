@@ -1,9 +1,33 @@
 {% extends 'base.html' %}
 {% from 'bootstrap/form.html' import render_form %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+{% from 'macros.html' import trend_card with context %}
 
-{% block title %}Index{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block content %}
+    {% if current_user.is_authenticated %}
+        <div class="row justify-content-md-center">
+            <div class="col-md-8">
+                {% if photos %}
+                    {% for photo in photos %}
+                        {{ trend_card(photo) }}
+                    {% endfor %}
+                {% else %}
+                    <div class="tip text-center">
+                        <h3>No trends.</h3>
+                        <a class="btn btn-link" href="{{ url_for('main.explore') }}">Explore</a>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-md-3">
+                {% include 'main/_sidebar.html' %}
+            </div>
+        </div>
+            {% if photos %}
+                {{ render_pagination(pagination, align='center') }}
+            {% endif %}
+    {% else %}
     <div class="jumbotron"  style="margin-top: 32px">
         <div class="row">
             <div class="col-md-8">
@@ -18,4 +42,5 @@
             </div>
         </div>
     </div>
+    {% endif %}
 {% endblock %}

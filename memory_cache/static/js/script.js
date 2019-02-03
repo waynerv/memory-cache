@@ -149,9 +149,6 @@ function unfollow(e) {
     });
 }
 
-$(document).on('click', '.follow-btn', follow.bind(this));
-$(document).on('click', '.unfollow-btn', unfollow.bind(this));
-
 function update_followers_count(id) {
     var $el = $('#followers-count-' + id)
     $.ajax({
@@ -162,6 +159,55 @@ function update_followers_count(id) {
         }
     })
 }
+
+$(document).on('click', '.follow-btn', follow.bind(this));
+$(document).on('click', '.unfollow-btn', unfollow.bind(this));
+
+function collect(e) {
+    var $el = $(e.target);
+    var id = $el.data('id');
+
+    $.ajax({
+        type: 'POST',
+        url: $el.data('href'),
+        success: function (data) {
+            $el.prev().show();
+            $el.hide();
+            update_collectors_count(id);
+            toast(data.message);
+        }
+    });
+}
+
+function uncollect(e) {
+    var $el = $(e.target);
+    var id = $el.data('id');
+
+    $.ajax({
+        type: 'POST',
+        url: $el.data('href'),
+        success: function (data) {
+            $el.next().show();
+            $el.hide();
+            update_collectors_count(id);
+            toast(data.message);
+        }
+    });
+}
+
+function update_collectors_count(id) {
+    var $el = $('#followers-count-' + id)
+    $.ajax({
+        type: 'GET',
+        url: $el.data('href'),
+        success: function (data) {
+            $el.text(data.count); // 根据返回的JSON数据更新数字，注意对象的读取方式
+        }
+    })
+}
+
+$('.collect-btn').on('click', collect.bind(this));
+$('.uncollect-btn').on('click', uncollect.bind(this));
 
 function update_notifications_count() {
     var $el = $('#notification-badge');

@@ -31,6 +31,10 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
+                <div class="navbar-nav mr-auto">
+                    {{ render_nav_item('main.index', 'Home') }}
+                    {{ render_nav_item('main.explore', 'Explore') }}
+                </div>
                 <ul class="navbar-nav ml-auto">
                     {% if not current_user.is_authenticated %}
                         {{ render_nav_item('auth.login', 'Login', use_li=True) }}
