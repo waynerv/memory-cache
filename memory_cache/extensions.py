@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_dropzone import Dropzone
 from flask_wtf.csrf import CSRFProtect
 from flask_avatars import Avatars
+from flask_whooshee import Whooshee
 
 db = SQLAlchemy()
 bootstrap = Bootstrap()
@@ -15,6 +16,7 @@ mail = Mail()
 dropzone = Dropzone()
 csrf = CSRFProtect()
 avatars = Avatars()
+whooshee = Whooshee()
 
 
 @login_manager.user_loader

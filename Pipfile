@@ -20,6 +20,7 @@ flask-login = "*"
 flask-mail = "*"
 flask-dropzone = "*"
 flask-avatars = "*"
+flask-whooshee = "*"
 
 [requires]
 python_version = "3.6"

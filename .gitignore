@@ -279,3 +279,5 @@ uploads/*
 !uploads/avatars
 uploads/avatars/*
 !uploads/avatars/.gitkeep
+
+whooshee

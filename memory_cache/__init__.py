@@ -9,7 +9,7 @@ from memory_cache.blueprints.auth import auth_bp
 from memory_cache.blueprints.main import main_bp
 from memory_cache.blueprints.user import user_bp
 from memory_cache.commands import register_command
-from memory_cache.extensions import db, bootstrap, moment, login_manager, mail, dropzone, csrf, avatars
+from memory_cache.extensions import db, bootstrap, moment, login_manager, mail, dropzone, csrf, avatars, whooshee
 from memory_cache.settings import config
 from memory_cache.models import User, Notification
 
@@ -45,6 +45,7 @@ def register_extensions(app):
     dropzone.init_app(app)
     csrf.init_app(app)
     avatars.init_app(app)
+    whooshee.init_app(app)
 
 
 def register_error_handler(app):

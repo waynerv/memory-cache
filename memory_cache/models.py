@@ -7,6 +7,7 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from memory_cache.extensions import db
+from memory_cache.extensions import whooshee
 
 tagging = db.Table('tagging',
                    db.Column('photo_id', db.Integer, db.ForeignKey('photo.id')),
@@ -35,6 +36,7 @@ class Follow(db.Model):
     followed = db.relationship('User', foreign_keys=[followed_id], back_populates='followers', lazy='joined')
 
 
+@whooshee.register_model('username', 'name')
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
@@ -135,6 +137,7 @@ class User(db.Model, UserMixin):
         return self.followers.filter_by(follower_id=user.id).first() is not None
 
 
+@whooshee.register_model('description')
 class Photo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.Text)
@@ -165,6 +168,7 @@ class Comment(db.Model):
     flag = db.Column(db.Integer, default=0)
 
 
+@whooshee.register_model('name')
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)

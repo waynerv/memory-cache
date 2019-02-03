@@ -14,7 +14,8 @@
     <div class="card-body">
         <div class="row">
             <a href="{{ url_for('user.index', username=photo.author.username) }}">
-                <img class="sidebar-avatar rounded avatar-m" src="{{ url_for('main.get_avatar', filename=photo.author.avatar_m) }}">
+                <img class="sidebar-avatar rounded avatar-m"
+                     src="{{ url_for('main.get_avatar', filename=photo.author.avatar_m) }}">
             </a>
             <div class="sidebar-profile">
                 <h6 class="card-title">
@@ -55,8 +56,8 @@
                 {% if photo.tags %}
                     {% for tag in photo.tags %}
                         <a class="badge badge-light"
-                                   href="{{ url_for('.show_tag', tag_id=tag.id) }}" target="_blank"><span
-                                        class="oi oi-tag"></span> {{ tag.name }}</a>
+                           href="{{ url_for('.show_tag', tag_id=tag.id) }}" target="_blank"><span
+                                class="oi oi-tag"></span> {{ tag.name }}</a>
                     {% endfor %}
                 {% endif %}
                 {% if current_user == photo.author %}
@@ -78,7 +79,8 @@
                     <hr>
                     {% for tag in photo.tags %}
                         <a class="dead-link" href="#!"
-                           data-href="{{ url_for('main.delete_tag', photo_id=photo.id, tag_id=tag.id) }}" data-toggle="modal"
+                           data-href="{{ url_for('main.delete_tag', photo_id=photo.id, tag_id=tag.id) }}"
+                           data-toggle="modal"
                            data-target="#confirm-delete" title="Delete tag">
                             <span class="badge badge-danger">
                                 {{ tag.name }}<span class="oi oi-trash" aria-hidden="true"></span></span>
@@ -103,7 +105,8 @@
                     </button>
                 </form>
             {% endif %}
-            <a href="{{ url_for('main.show_collectors', photo_id=photo.id) }}">{{ photo.collectors|length }} collectors</a>
+            <a href="{{ url_for('main.show_collectors', photo_id=photo.id) }}">{{ photo.collectors|length }}
+                collectors</a>
         {% else %} <!-- 对未登录用户显示的收藏表单 -->
             <form class="inline" method="post" action="{{ url_for('main.uncollect', photo_id=photo.id) }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

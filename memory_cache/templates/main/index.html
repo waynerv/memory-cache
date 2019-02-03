@@ -24,23 +24,23 @@
                 {% include 'main/_sidebar.html' %}
             </div>
         </div>
-            {% if photos %}
-                {{ render_pagination(pagination, align='center') }}
-            {% endif %}
+        {% if photos %}
+            {{ render_pagination(pagination, align='center') }}
+        {% endif %}
     {% else %}
-    <div class="jumbotron"  style="margin-top: 32px">
-        <div class="row">
-            <div class="col-md-8">
-                <img src="{{ url_for('static', filename='images/index.jpg') }}" class="rounded img-fluid">
-            </div>
-            <div class="col-md-4 align-self-center">
-                <h1>MemoryCache</h1>
-                <p>Capture and remember every wonderful moment.</p>
-                <p>
-                    <a class="btn btn-primary btn-lg" href="{{ url_for('auth.register') }}">Join Now</a>
-                </p>
+        <div class="jumbotron" style="margin-top: 32px">
+            <div class="row">
+                <div class="col-md-8">
+                    <img src="{{ url_for('static', filename='images/index.jpg') }}" class="rounded img-fluid">
+                </div>
+                <div class="col-md-4 align-self-center">
+                    <h1>MemoryCache</h1>
+                    <p>Capture and remember every wonderful moment.</p>
+                    <p>
+                        <a class="btn btn-primary btn-lg" href="{{ url_for('auth.register') }}">Join Now</a>
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
     {% endif %}
 {% endblock %}

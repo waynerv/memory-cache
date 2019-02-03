@@ -1,16 +1,17 @@
 import os
+
 from flask import Blueprint, render_template, request, current_app, send_from_directory, flash, redirect, url_for, abort
-from flask_login import login_required
 from flask_dropzone import random_filename
 from flask_login import current_user
+from flask_login import login_required
 from sqlalchemy.sql.expression import func
 
 from memory_cache.decorators import permission_required, confirm_required
-from memory_cache.models import Photo, Tag, Comment, Collect, Notification, Follow
 from memory_cache.extensions import db
-from memory_cache.utils import resize_image, flash_errors
 from memory_cache.forms.main import DescriptionForm, TagForm, CommentForm
+from memory_cache.models import Photo, Tag, Comment, Collect, Notification, Follow, User
 from memory_cache.notifications import push_collect_notification, push_comment_notification
+from memory_cache.utils import resize_image, flash_errors, redirect_back
 
 main_bp = Blueprint('main', __name__)
 
@@ -37,6 +38,26 @@ def index():
 def explore():
     photos = Photo.query.order_by(func.random()).limit(12)
     return render_template('main/explore.html', photos=photos)
+
+
+@main_bp.route('/search')
+def search():
+    q =request.args.get('q', '')
+    if q == '':
+        flash('Enter keyword about photo, user or tag.', 'warning')
+        return redirect_back()
+
+    category = request.args.get('category', 'photo')
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['APP_SEARCH_RESULT_PER_PAGE']
+    if category == 'photo':
+        pagination = Photo.query.whooshee_search(q).paginate(page, per_page)
+    elif category == 'tag':
+        pagination = Tag.query.whooshee_search(q).paginate(page, per_page)
+    else:
+        pagination = User.query.whooshee_search(q).paginate(page, per_page)
+    results = pagination.items
+    return render_template('main/search.html', q=q, pagination=pagination, results=results, category=category)
 
 
 @main_bp.route('/upload', methods=['GET', 'POST'])
