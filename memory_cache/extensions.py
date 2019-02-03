@@ -40,5 +40,5 @@ login_manager.login_message = 'Please log in to continue.'
 login_manager.login_message_category = 'warning'
 login_manager.anonymous_user = Guest
 login_manager.refresh_view = 'auth.re_authenticate'
-login_manager.login_message = 'Please reauthenticate to access this page.'
+login_manager.needs_refresh_message = 'Please reauthenticate to access this page.'
 login_manager.needs_refresh_message_category = 'warning'

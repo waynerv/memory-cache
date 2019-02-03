@@ -46,7 +46,7 @@ def follow(username):
 
     current_user.follow(user)
     flash('User followed.', 'success')
-    if user.author.receive_follow_notifications:
+    if user.author.receive_follow_notification:
         push_follow_notification(follower=current_user, receiver=user)
     return redirect_back()
 
