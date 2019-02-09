@@ -76,9 +76,9 @@
                 <p class="card-text">Locked: {{ locked_user_count|default('0') }}
                     Blocked: {{ blocked_user_count|default('0') }}</p>
                 <a class="btn btn-primary text-white" href="{{ url_for('admin.manage_user') }}">Manage</a>
-                <a class="btn btn-secondary text-white" href="{{ url_for('admin.manage_photo', filter='locked') }}">View
+                <a class="btn btn-secondary text-white" href="{{ url_for('admin.manage_user', filter='locked') }}">View
                     Locked</a>
-                <a class="btn btn-secondary text-white" href="{{ url_for('admin.manage_photo', filter='blocked') }}">View
+                <a class="btn btn-secondary text-white" href="{{ url_for('admin.manage_user', filter='blocked') }}">View
                     Blocked</a>
             </div>
         </div>

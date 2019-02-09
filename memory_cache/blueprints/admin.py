@@ -1,10 +1,11 @@
 from flask import Blueprint, flash, render_template, request, current_app
 from flask_login import login_required
 
-from memory_cache.decorators import permission_required
+from memory_cache.decorators import permission_required, admin_required
 from memory_cache.models import User, Photo, Tag, Comment, Role
 from memory_cache.utils import redirect_back
 from memory_cache.extensions import db
+from memory_cache.forms.admin import EditProfileAdminForm
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -148,3 +149,37 @@ def unblock_user(user_id):
     user.unblock()
     flash('Account unblocked.', 'info')
     return redirect_back()
+
+
+@admin_bp.route('/profile/<int:user_id>', methods=['GET', 'POST'])
+@admin_required
+def edit_profile_admin(user_id):
+    user = User.query.get_or_404(user_id)
+    form = EditProfileAdminForm(user=user)
+
+    if form.validate_on_submit():
+        user.name = form.name.data
+        user.username = form.username.data
+        user.website = form.website.data
+        user.bio = form.bio.data
+        user.location = form.location.data
+        user.email = form.email.data
+        role = Role.query.get(form.role.data)
+        if role.name == 'Locked':
+            user.lock()
+        user.role = role
+        user.confirmed = form.confirmed.data
+        user.active = form.active.data
+        db.session.commit()
+        flash('Profile updated.', 'success')
+        return redirect_back()
+    form.name.data = user.name
+    form.username.data = user.username
+    form.website.data = user.website
+    form.bio.data = user.bio
+    form.location.data = user.location
+    form.email.data = user.email
+    form.role.data = user.role.id
+    form.confirmed.data = user.confirmed
+    form.active.data = user.active
+    return render_template('admin/edit_profile.html', form=form, user=user)
