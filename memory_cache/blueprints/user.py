@@ -1,5 +1,5 @@
 from flask import Blueprint, request, current_app, render_template, flash, redirect, url_for
-from flask_login import login_required, current_user, fresh_login_required
+from flask_login import login_required, current_user, fresh_login_required, logout_user
 
 from memory_cache.decorators import confirm_required, permission_required
 from memory_cache.extensions import db, avatars
@@ -17,6 +17,10 @@ user_bp = Blueprint('user', __name__)
 @user_bp.route('/<username>')
 def index(username):
     user = User.query.filter(User.username == username).first_or_404()
+    if user == current_user and user.locked:
+        flash('Your account is locked.', 'danger')
+    if user == current_user and not user.active:
+        logout_user()
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['APP_PHOTO_PER_PAGE']
     pagination = Photo.query.with_parent(user).order_by(Photo.timestamp.desc()).paginate(page, per_page)

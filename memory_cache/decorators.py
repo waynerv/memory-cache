@@ -28,7 +28,6 @@ def permission_required(permission_name):
             return func(*args, **kwargs)
 
         return wrapped_func
-
     return decorator
 
 

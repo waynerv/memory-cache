@@ -27,6 +27,41 @@
             <div class="float-right">
                 {{ follow_area(user) }}
             </div>
+            {% if current_user != user %}
+                {% if current_user.can('MODERATE') %}
+                    {% if user.locked %}
+                        <form class="inline" method="post" action="{{ url_for('admin.unlock_user', user_id=user.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-secondary btn-sm" type="submit">
+                                Unlock
+                            </button>
+                        </form>
+                    {% else %}
+                        <form class="inline" method="post" action="{{ url_for('admin.lock_user', user_id=user.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-warning btn-sm" type="submit">
+                                Lock
+                            </button>
+                        </form>
+                    {% endif %}
+                    {% if user.active %}
+                        <form class="inline" method="post" action="{{ url_for('admin.block_user', user_id=user.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-warning btn-sm" type="submit">
+                                Block
+                            </button>
+                        </form>
+                    {% else %}
+                        <form class="inline" method="post" action="{{ url_for('admin.unblock_user', user_id=user.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-secondary btn-sm" type="submit">
+                                Unblock
+                            </button>
+                        </form>
+                    {% endif %}
+                    <a class="btn btn-light btn-sm" href="mailto:{{ user.email }}">Email</a>
+                {% endif %}
+            {% endif %}
         </div>
     </div>
 </div>
