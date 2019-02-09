@@ -135,7 +135,7 @@ def photo_previous(photo_id):
 @login_required
 def delete_photo(photo_id):
     photo = Photo.query.get_or_404(photo_id)
-    if current_user != photo.author:
+    if current_user != photo.author and not current_user.can('MODERATE'):
         abort(403)
 
     db.session.delete(photo)
@@ -205,7 +205,7 @@ def new_tag(photo_id):
 def delete_tag(photo_id, tag_id):
     photo = Photo.query.get_or_404(photo_id)
     tag = Tag.query.get_or_404(tag_id)
-    if current_user != photo.author:
+    if current_user != photo.author and not current_user.can('MODERATE'):
         abort(403)
 
     if tag in photo.tags:
@@ -293,7 +293,7 @@ def reply_comment(comment_id):
 @login_required
 def delete_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
-    if current_user != comment.author or current_user != comment.photo.author:
+    if current_user != comment.author and current_user != comment.photo.author and not current_user.can('MODERATE'):
         abort(403)
 
     page = request.args.get('page', 1, type=int)

@@ -100,6 +100,7 @@ def fake_follow(count=30):
         user = User.query.get(random.randint(1, User.query.count()))
         user.follow(User.query.get(random.randint(1, User.query.count())))
 
+
 def fake_comment(count=100):
     for i in range(count):
         comment = Comment(

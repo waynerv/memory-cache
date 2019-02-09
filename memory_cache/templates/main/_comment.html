@@ -52,7 +52,7 @@
                                            href="{{ url_for('.reply_comment', comment_id=comment.id) }}">
                                             <span class="oi oi-comment-square"></span> Reply
                                         </a>
-                                        {% if current_user == comment.author or current_user == photo.author %}
+                                        {% if current_user == comment.author or current_user == photo.author or current_user.can('MODERATE') %}
                                             <a class="dropdown-item" data-toggle="modal" href="#!"
                                                data-href="{{ url_for('.delete_comment', comment_id=comment.id) }}"
                                                data-target="#confirm-delete">
