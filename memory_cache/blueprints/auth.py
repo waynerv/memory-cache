@@ -96,7 +96,7 @@ def forget_password():
             return redirect(url_for('auth.login'))
         flash('Invalid email.', 'warning')
         return redirect(url_for('auth.forget_password'))
-    return render_template('auth/reset_password.html', form=form)
+    return render_template('auth/forget_password.html', form=form)
 
 
 @auth_bp.route('/reset-password/<token>', methods=['GET', 'POST'])
@@ -137,7 +137,7 @@ def re_authenticated():
         return redirect(url_for('main.index'))
 
     form = LoginForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit() and current_user.validate_password(form.password.data):
         confirm_login()
         return redirect_back()
     return render_template('auth/login.html', form=form)

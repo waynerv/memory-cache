@@ -47,7 +47,7 @@ $(document).ajaxError(function (event, request, settings) {
             IS_JSON = false
         }
 
-        if (IS_JSON && data != undefined && data.hasOwnProperty('message')) {
+        if (IS_JSON && data !== undefined && data.hasOwnProperty('message')) {
             message = JSON.parse(request.responseText).message;
         } else {
             message = default_error_message; // 使用默认错误消息
