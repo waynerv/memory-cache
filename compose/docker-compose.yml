@@ -1,0 +1,56 @@
+version: '3'
+services:
+  web_app:
+    container_name: memorycache
+    restart: always
+    image: memorycache:0.1
+    volumes:
+      - app_static:/usr/src/app/memory_cache/static
+    env_file: docker.env
+    networks:
+      - webnet
+      - backend
+    environment:
+      # 通过数据库服务指定的用户密码连接数据库
+      DATABASE_URL: mysql+pymysql://kaka:4841452@mysql:3306/memorycache
+    depends_on:
+      - mysql
+
+  mysql:
+    container_name: mysqldb
+    restart: always
+    image: mysql:8.0
+    volumes:
+      - app_data:/data/db
+      # 建库建表脚本
+      - ../mysql/:/docker-entrypoint-initdb.d/:ro
+    networks:
+      - backend
+    environment:
+      # 登录root用户并创建用户，赋予给定数据库ALL权限
+      MYSQL_ROOT_PASSWORD: my-secret-pw
+      MYSQL_DATABASE: memorycache
+      MYSQL_USER: kaka
+      MYSQL_PASSWORD: 4841452
+
+  nginx-proxy:
+    container_name: nginx
+    restart: always
+    build: ../nginx
+    image: nginx-mc:latest
+    ports:
+      - "80:80"
+    volumes:
+      - app_static:/usr/share/nginx/html/static:ro
+    networks:
+      - webnet
+    depends_on:
+      - web_app
+
+networks:
+  webnet:
+  backend:
+
+volumes:
+  app_data:
+  app_static:
