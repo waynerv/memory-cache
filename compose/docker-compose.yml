@@ -12,7 +12,7 @@ services:
       - backend
     environment:
       # 通过数据库服务指定的用户密码连接数据库
-      DATABASE_URL: mysql+pymysql://kaka:4841452@mysql:3306/memorycache
+      DATABASE_URL: mysql+pymysql://waynerv:example@mysql:3306/memorycache
     depends_on:
       - mysql
 
@@ -30,8 +30,8 @@ services:
       # 登录root用户并创建用户，赋予给定数据库ALL权限
       MYSQL_ROOT_PASSWORD: my-secret-pw
       MYSQL_DATABASE: memorycache
-      MYSQL_USER: kaka
-      MYSQL_PASSWORD: 4841452
+      MYSQL_USER: waynerv
+      MYSQL_PASSWORD: example
 
   nginx-proxy:
     container_name: nginx
