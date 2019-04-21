@@ -22,6 +22,7 @@ flask-dropzone = "*"
 flask-avatars = "*"
 flask-whooshee = "*"
 cryptography = "*"
+werkzeug = "==0.14.1"
 
 [requires]
 python_version = "3.6"
