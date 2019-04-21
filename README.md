@@ -17,11 +17,11 @@
 
 首页
 
-！[index](http://pp0zvba2e.bkt.clouddn.com/2019-04-21%2023-31-12%20%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png)
+![index](http://pp0zvba2e.bkt.clouddn.com/2019-04-21%2023-31-12%20%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png)
 
 图片详情页
 
-！[photo](http://pp0zvba2e.bkt.clouddn.com/2019-04-21%2023-31-22%20%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png)
+![photo](http://pp0zvba2e.bkt.clouddn.com/2019-04-21%2023-31-22%20%E7%9A%84%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png)
 
 个人主页
 

@@ -274,10 +274,10 @@ fabric.properties
 
 # Development
 *.db
-uploads/*
+app/uploads/*
 !uploads/.gitkeep
 !uploads/avatars
 uploads/avatars/*
 !uploads/avatars/.gitkeep
 
-whooshee
+app/whooshee
