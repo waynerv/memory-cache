@@ -129,7 +129,7 @@ $ (sudo) docker-compose down
 
 #### 1\. 创建管理员账户
 
-以 `ORIGINBLOG_ADMIN_EMAIL` 环境参数值为邮箱注册的用户将成为管理员。
+以 `APP_ADMIN_EMAIL` 环境参数值为邮箱注册的用户将成为管理员。
 
 开发环境下可使用 `Role` 模型的 `init` 方法重置角色权限。
 
